@@ -3,21 +3,46 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-int add_usuario (int cpf, int senha){
-    char pasta[255] = "usuario.txt";
-    FILE *login = fopen (pasta, "w");
+int add_usuario (int *cpf, int *senha){
 
-    fprintf(login, "cpf: %d\
+    FILE *login;
+    login = fopen ("usuario.bin", "wb");
+
+    fwrite(cpf, sizeof(int), 1, login);
+    fwrite(senha, sizeof(int), 1, login);
     fclose(login);
-
 }
 
+int le_usuario (int *cpf, int *senha){
+    int i = 0;
+    FILE *login;
+    login = fopen ("usuario.bin", "rb");
+
+    fread(cpf, sizeof(int), 1, login);
+    
+    for(i = 0; i < 1; i++)
+    {
+        printf("%d\n", cpf[i]);
+    }
+
+    for(i = 0; i < 1; i++)
+    {
+        printf("%d\n", senha[i]);
+    }
+}
 
 int main(){
-    add_usuario(123, 123);
-    
 
+    int cpf [1] = {123};
+    int senha [1] = {321};
+    add_usuario(cpf, senha);
+    le_usuario(cpf, senha);
 
+    int cpf_entrada;
+
+    printf("Digite seu cpf: ");
+    scanf("%d", &cpf_entrada);
+    printf("entrada: %d", cpf_entrada);
 
     return 0;
 }
