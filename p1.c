@@ -3,14 +3,13 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+void limpa(){
+    system("cls");
+}
+
 int add_usuario (int cpf, int senha){
     char pasta[255] = "usuario.txt";
-    FILE *login = fopen (pasta, "w");
 
-<<<<<<< Updated upstream
-    fprintf(login, "cpf: %d\
-    fclose(login);
-=======
     FILE *login;                                                // define que login  eh um arquivo
     login = fopen ("usuario.bin", "wb");                        // abre o arquivo em modo de "write binario"
     fwrite(&cpf, sizeof(int), 1, login);                        // escreve no arquivo o cpf
@@ -36,7 +35,6 @@ int Login_cpf (){
             // pede o cpf e coloca na var cpf_entrada
             printf("Digite seu cpf: \n");
             resultado_scan = scanf("%d", &cpf_entrada);
->>>>>>> Stashed changes
 
             // se digitar um numero o scan sai com o numero 1, caso contrario sai como 0
             if (resultado_scan != 1) {
@@ -80,20 +78,12 @@ int Login_cpf (){
 
 
 int main(){
-<<<<<<< Updated upstream
-    add_usuario(123, 123);
-    
-=======
-    // int cpf = 123;
-    // int senha = 321;
-    // add_usuario(cpf, senha);
->>>>>>> Stashed changes
+    int cpf = 123;
+    int senha = 321;
+    add_usuario(cpf, senha);
 
 
-<<<<<<< Updated upstream
-=======
     Login_cpf();
->>>>>>> Stashed changes
 
     return 0;
 }
