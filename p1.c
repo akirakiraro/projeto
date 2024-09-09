@@ -17,7 +17,7 @@ int add_usuario (int cpf, int senha){
     fclose(login);                                              // fecha o arquivo
 }
 
-// Funcao que faz o login do usuario ---------------------------------------------------------------------------------------
+// Funcao que faz o login do cpf do usuario ---------------------------------------------------------------------------------------
 int Login_cpf (){
     // define inteiros e ponteiros para variaveis
     int cpf_entrada, cpf_usuario, resultado_scan;
@@ -67,6 +67,7 @@ int Login_cpf (){
         if (cpf_entrada == cpf_usuario){
             limpa();
             printf("CPF aprovado\n");
+            printf("O que ele pegou do arquivo: %d", cpf_usuario);
             *ptr_aprovacao = 1;
         }else{
             limpa();
@@ -76,6 +77,9 @@ int Login_cpf (){
     return 0;
 }
 
+int Login_senha (){
+    return 1;
+}
 
 int main(){
     int cpf = 123;
@@ -84,6 +88,8 @@ int main(){
 
 
     Login_cpf();
+    Login_senha();
+
 
     return 0;
 }
