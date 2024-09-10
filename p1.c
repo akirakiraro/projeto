@@ -7,13 +7,14 @@ void limpa(){
     system("cls");
 }
 
-int add_usuario (int cpf, int senha){
+int add_usuario (int cpf, int senha, int real){
     char pasta[255] = "usuario.txt";
 
     FILE *login;                                                // define que login  eh um arquivo
     login = fopen ("usuario.bin", "wb");                        // abre o arquivo em modo de "write binario"
     fwrite(&cpf, sizeof(int), 1, login);                        // escreve no arquivo o cpf
     fwrite(&senha, sizeof(int), 1, login);                      // escreve no arquivo a senha
+    fwrite(&real, sizeof(int), 1, login);                       // escreve no arquivo a qntd de reais
     fclose(login);                                              // fecha o arquivo
 }
 
@@ -67,7 +68,7 @@ int Login_cpf (){
         if (cpf_entrada == cpf_usuario){
             limpa();
             printf("CPF aprovado\n");
-            printf("O que ele pegou do arquivo: %d", cpf_usuario);
+            // printf("O que ele pegou do arquivo: %d", cpf_usuario);
             *ptr_aprovacao = 1;
         }else{
             limpa();
@@ -76,22 +77,118 @@ int Login_cpf (){
     } while (*ptr_aprovacao == 0);
     return 0;
 }
-
+// Funcao que faz o login da senha -----------------------------------------------------------------------------------------------
 int Login_senha (){
+    // define inteiros e ponteiros para variaveis
+    int senha_entrada, senha_usuario, resultado_scan, lixo;
+    int aprovacao_senha = 0;
+    int *ptr_aprovacao;
+    ptr_aprovacao = &aprovacao_senha;
+    limpa();
+    // faz uma repeticao para ficar pedindo o cpf
+    do {
+        // Teste para ver qual o valor de ptr antes da repeticao
+        // printf("valor de ptr_aprovacao antes: %d\n", *ptr_aprovacao);
+
+        // faz um looping até o usuario digitar um numero valido
+        do {
+            // pede o cpf e coloca na var cpf_entrada
+            printf("Digite sua senha: \n");
+            resultado_scan = scanf("%d", &senha_entrada);
+
+            // se digitar um numero o scan sai com o numero 1, caso contrario sai como 0
+            if (resultado_scan != 1) {
+                limpa();
+                printf("Entrada invalida, digite um numero.\n\n");
+
+                // limpa o buffer de entrada
+                while (getchar() != '\n');
+            }
+
+        } while (resultado_scan != 1);
+        // abre o arquivo binario em read
+        FILE *login;
+        login = fopen ("usuario.bin", "rb");
+        // verifica se teve erro ao abrir
+        if (login == NULL) {
+            limpa();
+            printf("Erro ao abrir o arquivo\n");
+            return 1;
+        }
+        // le a primeira informacao e guarda no senha_usuario e fecha o arquivo
+        fread(&lixo, sizeof(senha_usuario), 1, login);
+        fread(&senha_usuario, sizeof(senha_usuario), 1, login);
+        fclose(login);
+        // verifica se a senha que ele digitou é igual a senha que tem no arquivo
+        if (senha_entrada == senha_usuario){
+            limpa();
+            printf("Senha aprovada\n");
+            *ptr_aprovacao = 1;
+        }else{
+            limpa();
+            printf("Senha invalida, tente novamente.\n\n");
+        }
+    } while (*ptr_aprovacao == 0);
+    return 0;
+}
+// funcao para aparecer o console de opcoes -------------------------------------------------------------
+int mostrar_console(){
+    int opcao;
+    limpa();
+    printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
+    printf("1. Consultar saldo.\n");
+    printf("2. Consultar extrato.\n");
+    printf("3. Depositar reais.\n");
+    printf("4. Sacar reais.\n");
+    printf("5. Comprar criptomoedas.\n");
+    printf("6. Vender criptomoedas.\n\n");
+    printf("Digite a opcao desejada: ");
+    scanf("%d", &opcao);
+    printf("\n%d", opcao);
+    return opcao;
+}
+// funcao para consultar saldo -------------------------------------------------------
+int consultar_saldo(){
+    char scan;
+    limpa();
+    printf("Reais: \n");
+    printf("Aperte enter para voltar.");
+    scanf("%d", scan);
+
     return 1;
 }
 
 int main(){
     int cpf = 123;
     int senha = 321;
-    add_usuario(cpf, senha);
-
+    int real = 10;
+    add_usuario(cpf, senha, real);
 
     Login_cpf();
     Login_senha();
 
+    int caso;
+    do{
+        caso = mostrar_console();
+        switch ( caso ){
+        case 1 :
+        consultar_saldo();
+        break;
+        
+        case 2 :
+        printf ("Segunda\n");
+        break;
+        
+        default :
+        printf ("Valor invalido!\n");
+        }
+        if (caso != 99){
+            caso = 0;
+        }
+    } while ( caso != 99);
+    
+    
+
 
     return 0;
 }
-
-
