@@ -151,7 +151,10 @@ int mostrar_console(){
     printf("5. Comprar criptomoedas.\n");
     printf("6. Vender criptomoedas.\n\n");
     printf("Digite a opcao desejada: ");
-    scanf("%d", opcao);
+    opcao = getchar();
+    if (opcao == '\n'){
+        return -1;
+    }
     return opcao;
 }
 // funcao para consultar saldo -------------------------------------------------------
