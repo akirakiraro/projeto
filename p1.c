@@ -2,9 +2,16 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
-
+#include <windows.h>
+// limpa o terminal
 void limpa(){
     system("cls");
+}
+// limpa o buffer
+void limpar_buffer(){
+    int c;
+    // Lê e descarta todos os caracteres até encontrar um Enter ('\n') ou EOF
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 int add_usuario (int cpf, int senha, int real){
@@ -134,6 +141,7 @@ int Login_senha (){
 // funcao para aparecer o console de opcoes -------------------------------------------------------------
 int mostrar_console(){
     int opcao;
+    limpar_buffer();
     limpa();
     printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
     printf("1. Consultar saldo.\n");
@@ -143,17 +151,16 @@ int mostrar_console(){
     printf("5. Comprar criptomoedas.\n");
     printf("6. Vender criptomoedas.\n\n");
     printf("Digite a opcao desejada: ");
-    scanf("%d", &opcao);
-    printf("\n%d", opcao);
+    scanf("%d", opcao);
     return opcao;
 }
 // funcao para consultar saldo -------------------------------------------------------
 int consultar_saldo(){
-    char scan;
     limpa();
     printf("Reais: \n");
-    printf("Aperte enter para voltar.");
-    scanf("%d", scan);
+    printf("\nAperte enter para voltar.");
+    getchar();
+    limpar_buffer();
 
     return 1;
 }
@@ -166,29 +173,29 @@ int main(){
 
     Login_cpf();
     Login_senha();
-
-    int caso;
+    int caso = 0;
     do{
-        caso = mostrar_console();
-        switch ( caso ){
-        case 1 :
-        consultar_saldo();
-        break;
-        
-        case 2 :
-        printf ("Segunda\n");
-        break;
-        
-        default :
-        printf ("Valor invalido!\n");
-        }
-        if (caso != 99){
-            caso = 0;
+        if (caso == 0){
+            caso = mostrar_console();
+        }else{
+            switch ( caso ){
+            case 1 :
+                consultar_saldo();
+            break;
+            
+            case 2 :
+                printf ("Segunda\n");
+            break;
+            
+            default :
+                limpa();
+                printf ("Por favor, digite uma entrada valida!\n");
+                Sleep(2000);
+            }
+            if (caso != 99){
+                caso = 0;
+            }
         }
     } while ( caso != 99);
-    
-    
-
-
     return 0;
 }
