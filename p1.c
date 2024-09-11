@@ -14,7 +14,7 @@ void limpar_buffer(){
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-int add_usuario (int cpf, int senha, int real){
+int add_usuario (int cpf, int senha, int real, int bitcoin, int ethereum, int ripple){
     char pasta[255] = "usuario.txt";
 
     FILE *login;                                                // define que login  eh um arquivo
@@ -22,6 +22,9 @@ int add_usuario (int cpf, int senha, int real){
     fwrite(&cpf, sizeof(int), 1, login);                        // escreve no arquivo o cpf
     fwrite(&senha, sizeof(int), 1, login);                      // escreve no arquivo a senha
     fwrite(&real, sizeof(int), 1, login);                       // escreve no arquivo a qntd de reais
+    fwrite(&bitcoin, sizeof(int), 1, login);                    // escreve no arquivo a qntd de bitcoins
+    fwrite(&ethereum, sizeof(int), 1, login);                   // escreve no arquivo a qntd de Ethereum
+    fwrite(&ripple, sizeof(int), 1, login);                     // escreve no arquivo a qntd de Ripple
     fclose(login);                                              // fecha o arquivo
 }
 
@@ -146,12 +149,12 @@ int mostrar_console(){
     do {
         limpa();
         printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
-        printf("1. Consultar saldo.\n");
-        printf("2. Consultar extrato.\n");
-        printf("3. Depositar reais.\n");
-        printf("4. Sacar reais.\n");
-        printf("5. Comprar criptomoedas.\n");
-        printf("6. Vender criptomoedas.\n");
+        printf("1. Consultar saldo. (FEITO)\n");
+        printf("2. Consultar extrato. (Nao feito)\n");
+        printf("3. Depositar reais. (Nao feito, proximo a fazer)\n");
+        printf("4. Sacar reais. (Nao feito)\n");
+        printf("5. Comprar criptomoedas. (Nao feito)\n");
+        printf("6. Vender criptomoedas. (Nao feito)\n");
         printf("7. Sair\n\n");
         printf("Digite a opcao desejada (1-7): ");
 
@@ -178,8 +181,25 @@ int mostrar_console(){
 }
 // funcao para consultar saldo -------------------------------------------------------
 int consultar_saldo(){
+    int cpf, senha, real, bitcoin, ethereum, ripple;
+    // abre o arquivo binario em read
+    FILE *login;
+    login = fopen ("usuario.bin", "rb");
+    // 
+    fread(&cpf, sizeof(cpf), 1, login);
+    fread(&senha, sizeof(senha), 1, login);
+    fread(&real, sizeof(real), 1, login);
+    fread(&bitcoin, sizeof(bitcoin), 1, login);
+    fread(&ethereum, sizeof(ethereum), 1, login);
+    fread(&ripple, sizeof(ripple), 1, login);
+    fclose(login);
+
+
     limpa();
-    printf("Reais: \n");
+    printf("Reais: %d\n", real);
+    printf("Bitcoin: %d\n", bitcoin);
+    printf("Ethereum: %d\n", ethereum);
+    printf("Ripple: %d\n", ripple);
     printf("\nAperte enter para voltar.");
 
     char lixo[1];
@@ -192,7 +212,10 @@ int main(){
     int cpf = 123;
     int senha = 321;
     int real = 10;
-    add_usuario(cpf, senha, real);
+    int a = 10;
+    int b = 10;
+    int c = 10;
+    add_usuario(cpf, senha, real, a, b, c);
 
     Login_cpf();
     Login_senha();
@@ -215,7 +238,9 @@ int main(){
             default :
                 limpa();
                 printf ("Por favor, digite uma entrada valida!\n");
+                caso = 0;
                 Sleep(2000);
+                break;
             }
             if (caso != 7){
                 caso = 0;
