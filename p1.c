@@ -140,21 +140,40 @@ int Login_senha (){
 }
 // funcao para aparecer o console de opcoes -------------------------------------------------------------
 int mostrar_console(){
+    char entrada[10];  // Buffer para armazenar a entrada do usuário
     int opcao;
-    limpar_buffer();
-    limpa();
-    printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
-    printf("1. Consultar saldo.\n");
-    printf("2. Consultar extrato.\n");
-    printf("3. Depositar reais.\n");
-    printf("4. Sacar reais.\n");
-    printf("5. Comprar criptomoedas.\n");
-    printf("6. Vender criptomoedas.\n\n");
-    printf("Digite a opcao desejada: ");
-    opcao = getchar();
-    if (opcao == '\n'){
-        return -1;
-    }
+
+    do {
+        limpa();
+        printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
+        printf("1. Consultar saldo.\n");
+        printf("2. Consultar extrato.\n");
+        printf("3. Depositar reais.\n");
+        printf("4. Sacar reais.\n");
+        printf("5. Comprar criptomoedas.\n");
+        printf("6. Vender criptomoedas.\n");
+        printf("7. Sair\n\n");
+        printf("Digite a opcao desejada (1-7): ");
+
+        // Captura a entrada como uma string
+        fgets(entrada, sizeof(entrada), stdin);
+
+        // Verifica se o usuario apertou apenas Enter
+        if (entrada[0] == '\n') {
+            limpa();
+            printf("Entrada vazia! Por favor, insira uma opcao valida.\n");
+            Sleep(2000);
+            continue;
+        }
+
+        // Converte a string para um numero
+        if (sscanf(entrada, "%d", &opcao) != 1 || opcao < 1 || opcao > 7) {
+            limpa();
+            printf("Opcao invalida! Por favor, escolha um numero entre 1 e 6.\n");
+            Sleep(2000);
+        }
+    } while (opcao < 1 || opcao > 7);
+
     return opcao;
 }
 // funcao para consultar saldo -------------------------------------------------------
@@ -162,8 +181,9 @@ int consultar_saldo(){
     limpa();
     printf("Reais: \n");
     printf("\nAperte enter para voltar.");
-    getchar();
-    limpar_buffer();
+
+    char lixo[1];
+    fgets(lixo, sizeof(lixo), stdin);  // Lê qualquer coisa que o usuário digitar
 
     return 1;
 }
@@ -179,6 +199,7 @@ int main(){
     int caso = 0;
     do{
         if (caso == 0){
+            limpar_buffer();
             caso = mostrar_console();
         }else{
             switch ( caso ){
@@ -188,6 +209,7 @@ int main(){
             
             case 2 :
                 printf ("Segunda\n");
+                caso = 7;
             break;
             
             default :
@@ -195,10 +217,10 @@ int main(){
                 printf ("Por favor, digite uma entrada valida!\n");
                 Sleep(2000);
             }
-            if (caso != 99){
+            if (caso != 7){
                 caso = 0;
             }
         }
-    } while ( caso != 99);
+    } while ( caso != 7);
     return 0;
 }
