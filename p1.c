@@ -15,8 +15,6 @@ void limpar_buffer(){
 }
 
 int add_usuario (int cpf, int senha, int real, int bitcoin, int ethereum, int ripple){
-    char pasta[255] = "usuario.txt";
-
     FILE *login;                                                // define que login  eh um arquivo
     login = fopen ("usuario.bin", "wb");                        // abre o arquivo em modo de "write binario"
     fwrite(&cpf, sizeof(int), 1, login);                        // escreve no arquivo o cpf
@@ -28,6 +26,82 @@ int add_usuario (int cpf, int senha, int real, int bitcoin, int ethereum, int ri
     fclose(login);                                              // fecha o arquivo
 }
 
+// funcao para fazer o adm master!!!
+int ADM (){
+    int primeiro_cpf, primeira_senha;
+    int cpf_ADM = 123123;
+    int senha_ADM = 123123;
+
+    FILE *login;
+    login = fopen ("usuario.bin", "rb");
+    // verifica se tem o arquivo, caso nn tenha ele vai criar o arquivo só com o user ADM
+    if (login == NULL) {
+        int cpf = 123123, senha = 123123, qntd = 0;
+        printf("Criando arquivo binario. . . ");
+        Sleep(1000);
+        FILE *login;                                                // define que login  eh um arquivo
+        login = fopen ("usuario.bin", "wb");                        // abre o arquivo em modo de "write binario"
+        fwrite(&cpf, sizeof(int), 1, login);                        // escreve no arquivo o cpf
+        fwrite(&senha, sizeof(int), 1, login);                      // escreve no arquivo a senha
+        fwrite(&qntd, sizeof(int), 1, login);                       // escreve no arquivo a qntd de reais
+        fwrite(&qntd, sizeof(int), 1, login);                       // escreve no arquivo a qntd de bitcoins
+        fwrite(&qntd, sizeof(int), 1, login);                       // escreve no arquivo a qntd de Ethereum
+        fwrite(&qntd, sizeof(int), 1, login);                       // escreve no arquivo a qntd de Ripple
+        fclose(login);                                              // fecha o arquivo
+        return 0;
+    }
+    // vai ler o primeiro cpf e senha, se for igual ao do adm ele aprova se nn ele só vai acrescentar
+    fread(&primeiro_cpf, sizeof(primeiro_cpf), 1, login);
+    fread(&primeira_senha, sizeof(primeira_senha), 1, login);
+    fclose(login);
+    // verifica se o cpf é igual com o do ADM e a senha tbm
+    if (primeiro_cpf == cpf_ADM && primeira_senha == senha_ADM){
+        printf("Arquivo aprovado\n");
+        return 1;
+    }else{
+        // aki ele tem que mandar copiar todo o resto e escrever o do adm primeiro
+        printf("Arquivo desaprovado comeco");
+        login = fopen("usuario.bin", "rb");
+        typedef struct {
+            int cpf;
+            int senha;
+            int reais;
+            int bitcoin;
+            int ethereum;
+            int ripple;
+        } Usuario;
+
+        Usuario usuarios[11];
+        int contador = 0;
+
+        while (fread(&usuarios[contador], sizeof(Usuario), 1, login)) {
+            contador++;
+        }
+        fclose(login);
+
+        printf("contador: %d\n", contador);
+
+        login = fopen("usuario.bin", "wb");
+        Usuario novo_usuario;
+        novo_usuario.cpf = cpf_ADM;
+        novo_usuario.senha = senha_ADM;
+        novo_usuario.reais = 0;
+        novo_usuario.bitcoin = 0;
+        novo_usuario.ethereum = 0;
+        novo_usuario.ripple = 0;
+
+        fwrite(&novo_usuario, sizeof(Usuario), 1, login);
+
+        for (int i = 0; i < contador; i++) {
+            fwrite(&usuarios[i], sizeof(Usuario), 1, login);
+        }
+
+        fclose(login);
+
+        printf("Arquivo desaprovado");
+        return 1;
+    }
+}
 // Funcao que faz o login do cpf do usuario ---------------------------------------------------------------------------------------
 int Login_cpf (){
     // define inteiros e ponteiros para variaveis
@@ -87,7 +161,7 @@ int Login_cpf (){
     } while (*ptr_aprovacao == 0);
     return 0;
 }
-// Funcao que faz o login da senha -----------------------------------------------------------------------------------------------
+// Funcao que faz o login da senha ------------------------------------------------------------------------------------------------
 int Login_senha (){
     // define inteiros e ponteiros para variaveis
     int senha_entrada, senha_usuario, resultado_scan, lixo;
@@ -141,7 +215,7 @@ int Login_senha (){
     } while (*ptr_aprovacao == 0);
     return 0;
 }
-// funcao para aparecer o console de opcoes -------------------------------------------------------------
+// funcao para aparecer o console de opcoes ---------------------------------------------------------------------------------------
 int mostrar_console(){
     char entrada[10];  // Buffer para armazenar a entrada do usuário
     int opcao;
@@ -179,7 +253,7 @@ int mostrar_console(){
 
     return opcao;
 }
-// funcao para consultar saldo -------------------------------------------------------
+// funcao para consultar saldo ----------------------------------------------------------------------------------------------------
 int consultar_saldo(){
     int cpf, senha, real, bitcoin, ethereum, ripple;
     // abre o arquivo binario em read
@@ -207,15 +281,21 @@ int consultar_saldo(){
 
     return 1;
 }
+// Funcao para depositar reais ----------------------------------------------------------------------------------------------------
+int depositar_real(){
 
+}
 int main(){
     int cpf = 123;
-    int senha = 321;
+    int senha = 123;
     int real = 10;
     int a = 10;
     int b = 10;
     int c = 10;
     add_usuario(cpf, senha, real, a, b, c);
+    if (ADM() == -1){
+        exit(0);
+    }
 
     Login_cpf();
     Login_senha();
@@ -233,6 +313,10 @@ int main(){
             case 2 :
                 printf ("Segunda\n");
                 caso = 7;
+            break;
+
+            case 3 :
+                depositar_real();
             break;
             
             default :
