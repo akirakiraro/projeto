@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// #include <unistd.h> // Usar esse daqui no replit
-#include <Windows.h> // usar esse daqui no vscode
-// quando ir pro windows tem que trocar todos os usleep por Sleep
+#include <unistd.h> // Usar esse daqui no replit
+// #include <Windows.h> // usar esse daqui no vscode
+// quando ir pro windows tem que trocar todos os usleep por sleep
 // e trocar tbm o clear  por cls
 
 // limpa o terminal
-void limpa() { system("cls"); }
+void limpa() { system("clear"); }
 // limpa o buffer
 void limpar_buffer() {
   int c;
@@ -63,7 +63,7 @@ int ADM() {
   if (login == NULL) {
     limpa();
     printf("Criando arquivo binario...\n");
-    Sleep(1000);
+    usleep(1000);
 
     login =
         fopen("usuario.bin", "wb"); // Abre o arquivo no modo "wb" para escrita
@@ -142,8 +142,7 @@ int ADM() {
     return 1;
   }
 }
-// Funcao que faz o login do cpf do usuario
-// ---------------------------------------------------------------------------------------
+// Funcao que faz o login do cpf do usuario ---------------------------------------------------------------------------------------
 long long Login_cpf() {
   // define inteiros e ponteiros para variaveis
   char cpf_entrada[12];
@@ -231,8 +230,7 @@ long long Login_cpf() {
 
   return cpf_num;
 }
-// Funcao que faz o login da senha
-// ------------------------------------------------------------------------------------------------
+// Funcao que faz o login da senha ------------------------------------------------------------------------------------------------
 int Login_senha(char *cpf_usuario) {
   // define inteiros e ponteiros para variaveis
   int senha_entrada, senha_usuario, resultado_scan;
@@ -299,8 +297,7 @@ int Login_senha(char *cpf_usuario) {
   } while (*ptr_aprovacao == 0);
   return 0;
 }
-// funcao para aparecer o console de opcoes
-// ---------------------------------------------------------------------------------------
+// funcao para aparecer o console de opcoes ---------------------------------------------------------------------------------------
 int mostrar_console() {
   char entrada[10]; // Buffer para armazenar a entrada do usuário
   int opcao;
@@ -310,8 +307,8 @@ int mostrar_console() {
     printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
     printf("1. Consultar saldo. (FEITO)\n");
     printf("2. Consultar extrato. (Nao feito)\n");
-    printf("3. Depositar reais. (Nao feito, proximo a fazer)\n");
-    printf("4. Sacar reais. (Nao feito)\n");
+    printf("3. Depositar reais. (FEITO)\n");
+    printf("4. Sacar reais. (FEITO)\n");
     printf("5. Comprar criptomoedas. (Nao feito)\n");
     printf("6. Vender criptomoedas. (Nao feito)\n");
     printf("7. Sair\n\n");
@@ -324,7 +321,7 @@ int mostrar_console() {
     if (entrada[0] == '\n') {
       limpa();
       printf("Entrada vazia! Por favor, insira uma opcao valida.\n");
-      Sleep(2000);
+      usleep(2000);
       continue;
     }
 
@@ -332,14 +329,13 @@ int mostrar_console() {
     if (sscanf(entrada, "%d", &opcao) != 1 || opcao < 1 || opcao > 7) {
       limpa();
       printf("Opcao invalida! Por favor, escolha um numero entre 1 e 6.\n");
-      Sleep(2000);
+      usleep(2000);
     }
   } while (opcao < 1 || opcao > 7);
 
   return opcao;
 }
-// funcao para consultar saldo
-// ----------------------------------------------------------------------------------------------------
+// funcao para consultar saldo ----------------------------------------------------------------------------------------------------
 int consultar_saldo(char *cpf_usuario) {
   // define variaveis
   Usuario usuario;
@@ -382,9 +378,8 @@ int consultar_saldo(char *cpf_usuario) {
   }
   return 1;
 }
-// Funcao para depositar reais
-// ----------------------------------------------------------------------------------------------------
-int depositar_real() {
+// Funcao para depositar reais ----------------------------------------------------------------------------------------------------
+int depositar_real(char cpf[12]) {
   float valor_depositado;
   int deposito_aprovado = 0, resultado_scan = 0;
   // faz um loop pro usuario digitar o valor valido
@@ -408,7 +403,26 @@ int depositar_real() {
     }
   } while (resultado_scan != 1);
 
-  
+  // abre o arquivo binario em read e escrita
+  FILE *login = fopen("usuario.bin", "r+b");
+  if (!login) {
+    perror("nao foi possivel abrir o arquivo");
+    return -1;
+  }
+
+  Usuario usuario;
+
+  // percorre o arquivo para encontrar o CPF correspondente
+  while (fread(&usuario, sizeof(Usuario), 1, login)) {
+    if (strcmp(usuario.cpf, cpf) == 0) {
+      // Atualiza o valor dos reais
+      usuario.reais += valor_depositado;
+      fseek(login, -sizeof(Usuario), SEEK_CUR); // volta para a posicao anterior
+      fwrite(&usuario, sizeof(Usuario), 1, login); // grava a atualizacao
+      break;
+    }
+  }
+  fclose(login);
 
   limpa();
   printf("Deposito aprovado no valor de R$ %.2f\n", valor_depositado);
@@ -418,6 +432,84 @@ int depositar_real() {
   fgets(lixo, sizeof(lixo), stdin);
   return 1;
 }
+// funcao para sacar reais
+int sacar_real(char cpf[12]){
+  float valor_sacado, valor_disponivel;
+  int saque_aprovado = 0, resultado_scan = 0;
+  // faz um loop pro usuario digitar o valor valido
+  limpa();
+  do {
+    printf("Digite o valor do saque: \n");
+    resultado_scan = scanf("%f", &valor_sacado);
+
+    if (resultado_scan != 1) {
+      limpa();
+      printf("Entrada invalida, digite um numero.\n\n");
+
+      // limpa o buffer de entrada
+      while (getchar() != '\n')
+        ;
+    }
+    
+    if (valor_sacado < 0) {
+      limpa();
+      printf("Por favor digite um numero positivo.\n\n");
+      continue; // volta para inicio do loop para pedir o valor dnv
+    }
+    
+    FILE *login = fopen("usuario.bin", "rb");
+    if (!login) {
+      perror("nao foi possivel abrir o arquivo");
+      return -1;
+    }
+    
+    Usuario usuario;
+    
+    while (fread(&usuario, sizeof(Usuario), 1, login)) {
+      if (strcmp(usuario.cpf, cpf) == 0) {
+        valor_disponivel = usuario.reais;
+        if (valor_sacado > valor_disponivel){
+          limpa();
+          printf("Valor para saque nao disponivel.\n\n");
+          resultado_scan = 0;
+        }
+      }
+    }
+    fclose(login);
+    Login_senha(cpf);
+  } while (resultado_scan != 1);
+  
+  // abre o arquivo binario em read e escrita
+  FILE *login = fopen("usuario.bin", "r+b");
+  if (!login) {
+    perror("nao foi possivel abrir o arquivo");
+    return -1;
+  }
+
+  Usuario usuario;
+  
+  // percorre o arquivo para encontrar o CPF correspondente
+  while (fread(&usuario, sizeof(Usuario), 1, login)) {
+    if (strcmp(usuario.cpf, cpf) == 0) {
+      // Atualiza o valor dos reais
+      usuario.reais -= valor_sacado;
+      fseek(login, -sizeof(Usuario), SEEK_CUR); // volta para a posicao anterior
+      fwrite(&usuario, sizeof(Usuario), 1, login); // grava a atualizacao
+      break;
+    }
+  }
+  fclose(login);
+
+  limpa();
+  printf("Saque aprovado no valor de R$ %.2f\n", valor_sacado);
+  printf("\nAperte enter para voltar.");
+  limpar_buffer();
+  char lixo[1];
+  fgets(lixo, sizeof(lixo), stdin);
+  return 1;
+}
+
+
 int main() {
   long long cpf_main;
   char cpf_char[12];
@@ -444,14 +536,18 @@ int main() {
         break;
 
       case 3:
-        depositar_real();
+        depositar_real(cpf_char);
+        break;
+        
+      case 4:
+        sacar_real(cpf_char);
         break;
 
       default:
         limpa();
         printf("Por favor, digite uma entrada valida!\n");
         caso = 0;
-        Sleep(2000);
+        usleep(2000);
         break;
       }
       if (caso != 7) {
