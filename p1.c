@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <unistd.h> // Usar esse daqui no replit
 // #include <Windows.h> // usar esse daqui no vscode
-// quando ir pro windows tem que trocar todos os usleep por sleep
-// e trocar tbm o clear  por cls
+
+// Quando trocar de windows pro replit tem que trocar os include e o cls por clear
 
 // limpa o terminal
-void limpa() { system("clear"); }
+void limpa() { system("clear"); } // troca esse daqui se for mudar de plataforma
 // limpa o buffer
 void limpar_buffer() {
   int c;
@@ -40,7 +41,41 @@ int add_usuario(char cpf[12], int senha) {
   fwrite(&valor0, sizeof(int), 1, login); // ripple
   fclose(login);                          // fecha o arquivo
 }
-
+// struct para criptomoedas
+typedef struct {
+  float bitcoin_cotacao;
+  float ethereum_cotacao;
+  float ripple_cotacao;
+} Criptomoedas;
+// funcao para criar criptomoedas se precisar
+int arq_cripto (){
+  
+  // tenta abrir o arquivo, caso nn tenha o arquivo ele cria um.
+  FILE *criptomoedas;
+  criptomoedas = fopen("criptomoedas.bin", "rb");
+  if (criptomoedas == NULL){
+    printf("Criando arquivo de criptomoedas...\n\n");
+    fflush(stdout);  // Força a saída do buffer para o console
+    
+    sleep(2);
+    limpa();
+    criptomoedas = fopen("criptomoedas.bin", "wb");
+    if (criptomoedas == NULL) {
+      printf("Erro ao abrir o arquivo para escrita.\n");
+      return 1;
+    }
+    // base para as cotacoes caso nao tiver o arquivo de criptomoedas
+    Criptomoedas Base;
+    Base.bitcoin_cotacao = 300000000.00;
+    Base.ethereum_cotacao = 13000.00;
+    Base.ripple_cotacao = 3.20;
+    // escreve os items acima no arquivo
+    fwrite(&Base, sizeof(Criptomoedas), 1, criptomoedas);
+    fclose(criptomoedas);
+    return 0;
+  }
+  return 0;
+}
 // struct para definir o usuario
 typedef struct {
   char cpf[12]; // CPF como string (11 dígitos + terminador nulo)
@@ -63,10 +98,9 @@ int ADM() {
   if (login == NULL) {
     limpa();
     printf("Criando arquivo binario...\n");
-    usleep(1000);
+    sleep(1);
 
-    login =
-        fopen("usuario.bin", "wb"); // Abre o arquivo no modo "wb" para escrita
+    login = fopen("usuario.bin", "wb"); // Abre o arquivo no modo "wb" para escrita
     if (login == NULL) {
       printf("Erro ao abrir o arquivo para escrita.\n");
       return 1;
@@ -309,7 +343,7 @@ int mostrar_console() {
     printf("2. Consultar extrato. (Nao feito)\n");
     printf("3. Depositar reais. (FEITO)\n");
     printf("4. Sacar reais. (FEITO)\n");
-    printf("5. Comprar criptomoedas. (Nao feito)\n");
+    printf("5. Comprar criptomoedas. (FEITO)\n");
     printf("6. Vender criptomoedas. (Nao feito)\n");
     printf("7. Sair\n\n");
     printf("Digite a opcao desejada (1-7): ");
@@ -321,7 +355,7 @@ int mostrar_console() {
     if (entrada[0] == '\n') {
       limpa();
       printf("Entrada vazia! Por favor, insira uma opcao valida.\n");
-      usleep(2000);
+      sleep(2);
       continue;
     }
 
@@ -329,7 +363,7 @@ int mostrar_console() {
     if (sscanf(entrada, "%d", &opcao) != 1 || opcao < 1 || opcao > 7) {
       limpa();
       printf("Opcao invalida! Por favor, escolha um numero entre 1 e 6.\n");
-      usleep(2000);
+      sleep(2);
     }
   } while (opcao < 1 || opcao > 7);
 
@@ -432,10 +466,10 @@ int depositar_real(char cpf[12]) {
   fgets(lixo, sizeof(lixo), stdin);
   return 1;
 }
-// funcao para sacar reais
+// funcao para sacar reais --------------------------------------------------------------------------------------------------------
 int sacar_real(char cpf[12]){
   float valor_sacado, valor_disponivel;
-  int saque_aprovado = 0, resultado_scan = 0;
+  int saque_aprovado = 0, resultado_scan = 0, aprovacao_valor = 0;
   // faz um loop pro usuario digitar o valor valido
   limpa();
   do {
@@ -471,12 +505,17 @@ int sacar_real(char cpf[12]){
         if (valor_sacado > valor_disponivel){
           limpa();
           printf("Valor para saque nao disponivel.\n\n");
-          resultado_scan = 0;
+          resultado_scan = 0, aprovacao_valor = 0;
+          
+        }else{
+          aprovacao_valor = 1;
         }
       }
     }
     fclose(login);
-    Login_senha(cpf);
+    if (aprovacao_valor == 1) {
+      Login_senha(cpf);
+    }
   } while (resultado_scan != 1);
   
   // abre o arquivo binario em read e escrita
@@ -508,16 +547,198 @@ int sacar_real(char cpf[12]){
   fgets(lixo, sizeof(lixo), stdin);
   return 1;
 }
+// funcao para comprar criptomoedas -----------------------------------------------------------------------------------------------
+int comprar_cripto(char cpf[12]){
+  int opcao,resultado_scan,opcao_certa = 0;
 
+  do {
+    printf("Opcoes disponiveis para compra de criptomoedas:\n\n");
+    printf("1. Bitcoin\n");
+    printf("2. Ethereum\n");
+    printf("3. Ripple\n\n");
+    printf("Digite o numero da opcao desejada: ");
+    resultado_scan = scanf("%d", &opcao);
+    // se caso o valor digitado for diferente de um numero
+    if (resultado_scan != 1) {
+      limpa();
+      printf("Entrada invalida, digite um numero.\n\n");
 
+      // limpa o buffer de entrada
+      while (getchar() != '\n');
+    }else if (opcao < 1 || opcao > 3) {
+      limpa();
+      printf("Por favor digite um numero valido.\n\n");
+    }else{
+      opcao_certa = 1;
+    }
+    
+  } while (resultado_scan != 1 || opcao_certa != 1);
+
+  Usuario usuario;
+  // pega as variaveis de cotacao da cripto escolhida
+  float possui_bitcoin, possui_ethereum, possui_ripple, carteira_reais;
+  FILE *arquivo_usuario = fopen("usuario.bin", "rb");
+  if (!arquivo_usuario) { limpa(); printf("Erro ao abrir o arquivo\n"); return 1;}
+  // le o arquivo e busca o usuario do CPF
+  while (fread(&usuario, sizeof(Usuario), 1, arquivo_usuario)) {
+    if (strcmp(usuario.cpf, cpf) == 0) {
+      carteira_reais = usuario.reais;
+      possui_bitcoin = usuario.bitcoin;
+      possui_ethereum = usuario.ethereum;
+      possui_ripple = usuario.ripple;
+      break; // Encerra o loop se o CPF for encontrado
+    }
+  }
+  fclose(arquivo_usuario);
+  // pega as variaveis de cotacao
+  Criptomoedas criptomoedas;
+  FILE *arquivo_cripto = fopen("criptomoedas.bin", "rb");
+  if (!arquivo_cripto) { limpa(); printf("Erro ao abrir o arquivo\n"); return 1;}
+  // le as variaveis para armazenar as cotacoes
+  fread(&criptomoedas, sizeof(Criptomoedas), 1, arquivo_cripto);
+  fclose(arquivo_cripto);
+
+  char* cripto_maiusculo;
+  char* cripto;
+  float possui, cotacao;
+  float valor_min;
+  int taxa_compra;
+  switch (opcao) {
+    case 1:
+      cripto_maiusculo = "BITCOIN";
+      cripto = "Bitcoin";
+      possui = possui_bitcoin;
+      cotacao = criptomoedas.bitcoin_cotacao;
+      taxa_compra = 2;
+      break;
+
+    case 2:
+      cripto_maiusculo = "ETHEREUM";
+      cripto = "Ethereum";
+      possui = possui_ethereum;
+      cotacao = criptomoedas.ethereum_cotacao;
+      taxa_compra = 1;
+      break;
+
+    case 3:
+      cripto_maiusculo = "RIPPLE";
+      cripto = "Ripple";
+      possui = possui_ripple;
+      cotacao = criptomoedas.ripple_cotacao;
+      taxa_compra = 1;
+      break;
+
+  }
+  // ve se o usuario possui o valor minimo para poder comprar 0.001 criptomoeda, caso nn tenha ele nn deixza comprar
+  valor_min = roundf(((0.001 * cotacao) * ((taxa_compra / 100.0) + 1)) * 100) / 100;
+  if (valor_min > carteira_reais){
+    limpa();
+    printf("Valor minimo para comprar %s: R$ %.2f\n", cripto, valor_min);
+    printf("Voce nao possui saldo suficiente para comprar %s.\n\n", cripto);
+    printf("Aperte enter para voltar.");
+    limpar_buffer();
+    char lixo[1];
+    fgets(lixo, sizeof(lixo), stdin); // le qualquer coisa que o usuario digitar
+
+    return 0;
+  }
+  // mostra a criptomoeda escolhida e variaveis
+  int aprov = 0;
+  float valor_investido;
+  limpa();
+  // loop para pedir o valor do investimento
+  do {
+    limpar_buffer();
+    printf("COMPRAR %s\n\n", cripto_maiusculo);
+
+    printf("Carteira: R$ %.2f\n", carteira_reais);
+    printf("Possui: %.3f %s\n\n", possui, cripto);
+
+    printf("Cotacao: R$ %.2f\n", cotacao);
+    printf("Taxa de compra: %d%%\n\n", taxa_compra);
+
+    if (valor_min != 0.00){
+      printf("Valor minimo para comprar 0.001 %s: R$ %.2f\n\n", cripto, valor_min);
+    }  
+    // pede para digitar o valor em reais que o usuario quer comprar a criptomoeda
+    printf("Digite 0 para cancelar a compra\n");
+    printf("Digite quantos reais deseja investir em %s: ", cripto);
+    
+    resultado_scan = scanf("%f", &valor_investido);
+    if (!resultado_scan){
+      printf("Digite um numero.");
+      limpar_buffer();
+      continue;
+    }
+    if (valor_investido == 0){
+      limpa();
+      return 0;
+    } else if (valor_investido < 0) {
+      limpa();
+      printf("digite um valor positivo.\n\n");
+    } else if (valor_investido < valor_min) {
+      limpa();
+      printf("Valor minimo para comprar 0.001 %s: R$ %.2f\n\n", cripto, valor_min);
+    } else if (valor_investido > carteira_reais) {
+      limpa();
+      printf("Voce nao tem saldo suficiente para investir R$ %.2f\n\n", valor_investido);
+    } else {
+      aprov = 1;
+    }
+  }while (aprov == 0);
+
+  // calcula o valor em cripto que o usuario comprou
+  float valor_investido_criptomoeda, taxa_compra_arredondada;
+  // calcula a taxa p/ subtrair do valor investido e arredonda p/ 2 casas decimais
+  taxa_compra_arredondada = roundf(((valor_investido / 100) * taxa_compra) * 100) / 100;
+  // calcula o valor em cripto que o usuario comprou
+  valor_investido_criptomoeda = roundf(((valor_investido - taxa_compra_arredondada) / cotacao) * 1000) / 1000;
+  printf("o Valor investido foi de: %.2f %s\n", valor_investido_criptomoeda, cripto);
+  printf("Aperte enter para voltar.\n");
+  limpar_buffer();
+  
+  char lixo[1];
+  fgets(lixo, sizeof(lixo), stdin); // le qualquer coisa que o usuario digitar
+  // abre o arquivo para somar e subtrair os valores investidos
+  arquivo_usuario = fopen("usuario.bin", "r+b");
+  if (!arquivo_usuario) { limpa(); printf("Erro ao abrir o arquivo\n" ); return 1;}
+  // percorre o arquivo para encontrar o CPF correspondente
+  while (fread(&usuario, sizeof(Usuario), 1, arquivo_usuario)) {
+    if (strcmp(usuario.cpf, cpf) == 0) {
+      // Atualiza o valor dos reais
+      usuario.reais -= valor_investido;
+      if (opcao == 1) {
+        usuario.bitcoin += valor_investido_criptomoeda;
+      }else if (opcao == 2) {
+        usuario.ethereum += valor_investido_criptomoeda;
+      } else if (opcao == 3) {
+        usuario.ripple += valor_investido_criptomoeda;
+      }
+      
+      fseek(arquivo_usuario, -sizeof(Usuario), SEEK_CUR); // volta para a posicao anterior
+      fwrite(&usuario, sizeof(Usuario), 1, arquivo_usuario); // grava a atualizacao
+      break;
+    }
+  }
+  fclose(arquivo_usuario);
+  
+  return 0;
+}
+// MAIN ---------------------------
 int main() {
   long long cpf_main;
   char cpf_char[12];
   // verifica se tem os dados do ADM no arquivo bin
   ADM();
   limpa();
+  // verifica se tem o arquivo de criptomoedas.bin
+  arq_cripto();
+  limpa();
+  // Pede o CPF para login
   cpf_main = Login_cpf();
+  // converte o cpf para numero (long long)
   sprintf(cpf_char, "%lld", cpf_main);
+  // pede a senha para o login
   Login_senha(cpf_char);
   int caso = 0;
   do {
@@ -543,11 +764,16 @@ int main() {
         sacar_real(cpf_char);
         break;
 
+      case 5:
+        limpa();
+        comprar_cripto(cpf_char);
+        break;
+        
       default:
         limpa();
         printf("Por favor, digite uma entrada valida!\n");
         caso = 0;
-        usleep(2000);
+        sleep(2);
         break;
       }
       if (caso != 7) {
@@ -555,5 +781,8 @@ int main() {
       }
     }
   } while (caso != 7);
+  limpa();
+  printf("Obrigado por utilizar os servicos de Exchange de criptomoedas!\n\n");
+  printf("Made by: Akira e Guga\n\n");
   return 0;
 }
