@@ -184,6 +184,147 @@ int add_usuario() {
   fclose(login);
   return 0;
 }
+// funcao para remover usuario especifico
+int remover_usuario() {
+  int aprov_cpf = 0, resultado_scan;
+  char cpf_entrada[12];
+
+  // verifica se tem algum usuario para ele remover, se caso nn tiver ele ja avisa e volta
+  limpa();
+  Usuario usuario_1;
+  FILE *arquivo_usuarios = fopen("usuario.bin","rb");
+  if (arquivo_usuarios == NULL) {
+    limpa();
+    printf("Erro ao abrir o arquivo\n");
+    return 1;
+  }
+  
+  int contagem_verficacao = 0;
+  while (fread(&usuario_1, sizeof(Usuario), 1, arquivo_usuarios)) {
+    contagem_verficacao++;
+  }
+  fclose(arquivo_usuarios);
+  if (contagem_verficacao == 1) {
+    limpa();
+    printf("Nao ha usuarios cadastrados.\n");
+    printf("\nAperte enter para voltar.\n");
+    return 1;
+  }
+  
+  
+  
+  do{
+    printf("Digite 0 para voltar ao menu.\n");
+    printf("Digite 1 para abrir a lista de usuarios.\n\n");
+    printf("Digite o CPF que deseja remover ou a opcao desejada: ");
+    resultado_scan = scanf("%s", cpf_entrada);
+    if (resultado_scan != 1) {
+      limpa();
+      printf("Entrada invalida, digite um CPF valido.\n\n");
+      limpar_buffer();
+      continue;
+    }
+    if (strcmp(cpf_entrada, "0") == 0 ) {
+      return 0;
+    }
+    if (strcmp(cpf_entrada, "1") == 0) {
+      limpa();
+      Usuario usuario;
+      FILE *arquivo_usuarios = fopen("usuario.bin","rb");
+      if (arquivo_usuarios == NULL) {
+        limpa();
+        printf("Erro ao abrir o arquivo\n");
+        return 1;
+      }
+      // nao le o ADM haha
+      Usuario usuario_ignorado;
+      fread(&usuario_ignorado, sizeof(Usuario), 1, arquivo_usuarios);
+      int i = 0;
+      while (fread(&usuario, sizeof(Usuario), 1, arquivo_usuarios)) {
+        i++;
+        char cpf_formatado[15];
+        formatar_cpf(usuario.cpf, cpf_formatado);
+        printf("CPF do usuario %d: %s\n", i, cpf_formatado);
+      }
+      fclose(arquivo_usuarios);
+      if (i == 0) {
+        limpa();
+        printf("Nao ha usuarios cadastrados.\n");
+      }
+      printf("\nAperte enter para voltar.\n");
+      limpar_buffer();
+      getchar();
+      limpa();
+      continue;
+    }
+    // verifica se o comprimento é de 11 caracteres
+    if (strlen(cpf_entrada) != 11) {
+      limpa();
+      printf("CPF digitado deve conter 11 digitos.\n\n");
+      limpar_buffer();
+      continue;
+    }
+    // Verifica se o CPF digitado contem apenas digitos
+    for (int i = 0; cpf_entrada[i] != '\0'; i++) {
+      if (cpf_entrada[i] < '0' || cpf_entrada[i] > '9') {
+        limpa();
+        printf("CPF invalido, deve conter apenas numeros.\n\n");
+        limpar_buffer();
+        break;
+      } else {
+        aprov_cpf = 1;
+      }
+    }
+
+
+  } while ( aprov_cpf != 1);
+
+  int cpf_encontrado = 0, contador = 0;
+  Usuario usuario[15];
+  
+  arquivo_usuarios = fopen("usuario.bin", "rb");
+  if (arquivo_usuarios == NULL) {
+    limpa();
+    printf("Erro ao abrir o arquivo\n");
+    return 1;
+  }
+ 
+  // nao copia o ADM haha
+  Usuario usuario_ignorado;
+  fread(&usuario_ignorado, sizeof(Usuario), 1, arquivo_usuarios);
+  
+  while (fread(&usuario[contador], sizeof(Usuario), 1, arquivo_usuarios)) {
+    if (strcmp(usuario[contador].cpf, cpf_entrada) == 0) {
+      cpf_encontrado = 1;
+    } else {
+      contador++;
+    }
+  }
+  fclose(arquivo_usuarios);
+  
+  if (!cpf_encontrado) {
+    limpa();
+    printf("CPF %s não encontrado.\n", cpf_entrada);
+    return 0;
+  }
+
+  FILE *arquivo_temp = fopen("usuario_temp.bin", "wb");
+  if (arquivo_temp == NULL) {
+    limpa();
+    printf("Erro ao criar o arquivo temporário.\n");
+    return 1;
+  }
+
+  fwrite(usuario, sizeof(Usuario), contador, arquivo_temp);
+  fclose(arquivo_temp);
+
+  // Substituir o arquivo original
+  remove("usuario.bin");
+  rename("usuario_temp.bin", "usuario.bin");
+
+  printf("Usuario com CPF %s removido com sucesso.\n", cpf_entrada);
+  return 0;
+}
 // funcao para fazer o adm master!!!
 int ADM() {
   char cpf_ADM[] = "12312312312";
@@ -315,7 +456,7 @@ long long Login_cpf() {
       for (int i = 0; cpf_entrada[i] != '\0'; i++) {
         if (cpf_entrada[i] < '0' || cpf_entrada[i] > '9') {
           limpa();
-          printf("CPF inválido, deve conter apenas números.\n\n");
+          printf("CPF invalido, deve conter apenas numeros.\n\n");
           *ptr_aprovacao = 0;
           limpar_buffer();
           break;
@@ -439,14 +580,14 @@ int mostrar_console() {
     limpa();
     printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
     printf("1. Consultar saldo. (FEITO)\n");
-    printf("2. Consultar extrato. (Nao feito)\n");
+    printf("2. Consultar extrato. (Nao feito, Akira vai fazer :3 )\n");
     printf("3. Depositar reais. (FEITO)\n");
     printf("4. Sacar reais. (FEITO)\n");
     printf("5. Comprar criptomoedas. (FEITO)\n");
     printf("6. Vender criptomoedas. (FEITO)\n");
     printf("7. Atualizar criptomoedas. (FEITO)\n");
-    printf("8. Adicionar usuario. (Nao feito, fznd)\n");
-    printf("9. Remover usuario. (Nao feito, fznd)\n");
+    printf("8. Adicionar usuario. (FEITO)\n");
+    printf("9. Remover usuario. (FEITO)\n");
     printf("0. Sair\n\n");
     printf("Digite a opcao desejada (0-9): ");
 
@@ -1126,6 +1267,11 @@ int main() {
       case 8:
         limpa();
         add_usuario();
+        break;
+
+      case 9:
+        limpa();
+        remover_usuario();
         break;
         
       case 0:
