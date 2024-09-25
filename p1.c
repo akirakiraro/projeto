@@ -397,7 +397,9 @@ int remover_usuario() {
     printf("Erro ao criar o arquivo temporário.\n");
     return 1;
   }
+
   fwrite(&usuario_ignorado, sizeof(Usuario), 1, arquivo_temp);
+
   fwrite(usuario, sizeof(Usuario), contador, arquivo_temp);
   fclose(arquivo_temp);
 
