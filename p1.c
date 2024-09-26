@@ -74,37 +74,46 @@ const char* moeda_to_string(int moeda) {
 void ler_extrato (char cpf[12]) {
   // abre o arquivo para ler o extrato
   FILE *arquivo_extrato = fopen("Extrato.bin", "rb");
-  if (!arquivo_extrato) {perror("Erro ao abrir o arquivo"); return;}
+  if (!arquivo_extrato) {perror("Nao ha nenhuma transacao cadastrada."); return;}
   // vai armazenar cada registro
-  Extrato extrato;
+  Extrato extratos[100]; // Array para armazenar os extratos
+  int total_extratos = 0;
+
+  // le todos os extratos do arquivo
+  while (fread(&extratos[total_extratos], sizeof(Extrato), 1, arquivo_extrato) && total_extratos < 100) {
+    total_extratos++;
+  }
+
+  fclose(arquivo_extrato);
+
   int transacoes_encontradas = 0;
+
   // vai deixar tudo na verrtical e bonitao
   limpa();
   printf("%s\n", "-----------------------------------------------------------------------------------");
   printf("%-15s %-15s %-10s %-20s %-10s %-10s\n", "CPF", "Valor", "Moeda", "Data", "Taxa", "Cotacao");
   printf("%s\n", "-----------------------------------------------------------------------------------");
 
-  // pega cada extrato do arquivo e printa
-  while (fread(&extrato, sizeof(Extrato), 1, arquivo_extrato)) {
-    if (strcmp(extrato.CPF, cpf) == 0 && transacoes_encontradas <= 100) {
-      transacoes_encontradas++;
-      char buffer[26];
-      strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&extrato.data));
+  // pega cada extrato e printa em ordem reversa para ficar bunitu
+  for (int i = total_extratos - 1; i >= 0; i--) {
+        if (strcmp(extratos[i].CPF, cpf) == 0 && transacoes_encontradas < 100) {
+            transacoes_encontradas++;
+            char buffer[26];
+            strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&extratos[i].data));
 
-      // mostra a transacao
-      float valor_formatado = (extrato.tipo == 1) ? extrato.valor : -extrato.valor; // sinal positivo ou negativo
-      char cpf_formatado[15];
-      formatar_cpf(extrato.CPF, cpf_formatado);
-      printf("%-15s %-15.2f %-10s %-20s ", cpf_formatado, valor_formatado, moeda_to_string(extrato.moeda), buffer);
+            float valor_formatado = (extratos[i].tipo == 1) ? extratos[i].valor : -extratos[i].valor; // sinal positivo ou negativo
+            char cpf_formatado[15];
+            formatar_cpf(extratos[i].CPF, cpf_formatado);
+            printf("%-15s %-15.2f %-10s %-20s ", cpf_formatado, valor_formatado, moeda_to_string(extratos[i].moeda), buffer);
 
-      // nn printa a taxa e a cotacao se for real
-      if (extrato.moeda != 0) {
-          printf("%-10d %-10.2f\n", extrato.taxa, extrato.cotacao);
-      } else {
-          printf("N/A         N/A       \n");
-      }
+            // printa se a moeda for o real
+            if (extratos[i].moeda != 0) {
+                printf("%-10d %-10.2f\n", extratos[i].taxa, extratos[i].cotacao);
+            } else {
+                printf("N/A         N/A       \n");
+            }
+        }
     }
-  }
 
   if (transacoes_encontradas == 0) {
     limpa();
@@ -686,15 +695,15 @@ int mostrar_console() {
   do {
     limpa();
     printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
-    printf("1. Consultar saldo. (FEITO)\n");
-    printf("2. Consultar extrato. (Nao feito, Akira vai fazer :3 )\n");
-    printf("3. Depositar reais. (FEITO)\n");
-    printf("4. Sacar reais. (FEITO)\n");
-    printf("5. Comprar criptomoedas. (FEITO)\n");
-    printf("6. Vender criptomoedas. (FEITO)\n");
-    printf("7. Atualizar criptomoedas. (FEITO)\n");
-    printf("8. Adicionar usuario. (FEITO)\n");
-    printf("9. Remover usuario. (FEITO)\n");
+    printf("1. Consultar saldo.\n");
+    printf("2. Consultar extrato.\n");
+    printf("3. Depositar reais.\n");
+    printf("4. Sacar reais.\n");
+    printf("5. Comprar criptomoedas.\n");
+    printf("6. Vender criptomoedas.\n");
+    printf("7. Atualizar criptomoedas.\n");
+    printf("8. Adicionar usuario.\n");
+    printf("9. Remover usuario.\n");
     printf("0. Sair\n\n");
     printf("Digite a opcao desejada (0-9): ");
 
