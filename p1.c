@@ -86,7 +86,7 @@ void ler_extrato (char cpf[12]) {
 
   // pega cada extrato do arquivo e printa
   while (fread(&extrato, sizeof(Extrato), 1, arquivo_extrato)) {
-    if (strcmp(extrato.CPF, cpf) == 0) {
+    if (strcmp(extrato.CPF, cpf) == 0 && transacoes_encontradas <= 100) {
       transacoes_encontradas++;
       char buffer[26];
       strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&extrato.data));
@@ -125,7 +125,7 @@ int arq_cripto (){
     printf("Criando arquivo de criptomoedas...\n\n");
     fflush(stdout);  // Força a saída do buffer para o console
     
-    Sleep(2);
+    Sleep(1000);
     limpa();
     criptomoedas = fopen("criptomoedas.bin", "wb");
     if (criptomoedas == NULL) {
@@ -197,6 +197,7 @@ int add_usuario() {
   // pede para o ADM digitar o CPF do novo usuario.
   limpa();
   do {
+    aprov_cpf = 0;
     printf("Digite 0 para cancelar.\n");
     printf("Digite o CPF do novo usuario (11 digitos sem ponto e traco): ");
     resultado_scan = scanf("%s", cpf_novo_usuario);
@@ -218,14 +219,34 @@ int add_usuario() {
     for (int i = 0; cpf_novo_usuario[i] != '\0'; i++) {
       if (cpf_novo_usuario[i] < '0' || cpf_novo_usuario[i] > '9') {
         limpa();
-        printf("CPF inválido, deve conter apenas números.\n\n");
+        printf("CPF invalido, deve conter apenas numeros.\n\n");
         limpar_buffer();
         break;
-      } else {
-        aprov_cpf = 1;
       }
     }
 
+    FILE *arquivo_usuarios = fopen("usuario.bin","rb");
+    if (!arquivo_usuarios) {perror("Erro ao abrir o arquivo."); return 1;}
+
+    Usuario usuario;
+
+    while (fread(&usuario, sizeof(Usuario), 1, arquivo_usuarios)) {
+      if (strcmp(usuario.cpf, cpf_novo_usuario) == 0) {
+        aprov_cpf = 2;
+      }
+    }
+    fclose(arquivo_usuarios);
+    if (aprov_cpf == 2) {
+      limpa();
+      limpar_buffer();
+      printf("\nJa existe um usuario com este CPF.\n\n");
+      printf("Aperte enter para voltar.\n");
+      getchar();
+      limpa();
+      continue;
+    } else {
+      aprov_cpf = 1;
+    }
   } while (aprov_cpf != 1);
   limpa();
   // pede para o ADM digitar a senha do novo usuario.
@@ -309,8 +330,7 @@ int remover_usuario() {
     }
     if (strcmp(cpf_entrada, "0") == 0 ) {
       return 0;
-    }
-    if (strcmp(cpf_entrada, "1") == 0) {
+    } else if (strcmp(cpf_entrada, "1") == 0) {
       limpa();
       Usuario usuario;
       FILE *arquivo_usuarios = fopen("usuario.bin","rb");
@@ -387,7 +407,9 @@ int remover_usuario() {
   
   if (!cpf_encontrado) {
     limpa();
-    printf("CPF %s não encontrado.\n", cpf_entrada);
+    printf("CPF: %s nao encontrado.\n\n", cpf_entrada);
+    printf("Aperte enter para voltar.\n");
+    getchar();
     return 0;
   }
 
@@ -423,7 +445,7 @@ int ADM() {
   if (login == NULL) {
     limpa();
     printf("Criando arquivo binario...\n");
-    Sleep(1);
+    Sleep(1000);
 
     login = fopen("usuario.bin", "wb"); // Abre o arquivo no modo "wb" para escrita
     if (login == NULL) {
@@ -683,7 +705,7 @@ int mostrar_console() {
     if (entrada[0] == '\n') {
       limpa();
       printf("Entrada vazia! Por favor, insira uma opcao valida.\n");
-      Sleep(1);
+      Sleep(1000);
       limpar_buffer();
       continue;
     }
@@ -692,7 +714,7 @@ int mostrar_console() {
     if (sscanf(entrada, "%d", &opcao) != 1 || opcao < 0 || opcao > 9) {
       limpa();
       printf("Opcao invalida! Por favor, escolha um numero entre 0 e 9.\n");
-      Sleep(2);
+      Sleep(1000);
     }
   } while (opcao < 0 || opcao > 9);
 
@@ -744,7 +766,7 @@ int consultar_saldo(char *cpf_usuario) {
 // Funcao para depositar reais ----------------------------------------------------------------------------------------------------
 int depositar_real(char cpf[12]) {
   float valor_depositado;
-  int deposito_aprovado = 0, resultado_scan = 0;
+  int deposito_aprovado = 0, resultado_scan = 0, aprov = 0;
   // faz um loop pro usuario digitar o valor valido
   limpa();
   do {
@@ -755,19 +777,19 @@ int depositar_real(char cpf[12]) {
     if (resultado_scan != 1) {
       limpa();
       printf("Entrada invalida, digite um numero.\n\n");
-
       // limpa o buffer de entrada
-      while (getchar() != '\n')
-        ;
-    }
-    if (valor_depositado < 0) {
+      while (getchar() != '\n');
+      continue;
+    } else if (valor_depositado < 0) {
       limpa();
       printf("Por favor digite um numero positivo.\n\n");
-      continue; // volta para inicio do loop para pedir a senha dnv
+      continue;
     } else if ( valor_depositado == 0) {
       return 0;
-    }
-  } while (resultado_scan != 1);
+    } else {
+      aprov = 1;
+    } 
+  } while (aprov != 1);
 
   // abre o arquivo binario em read e escrita
   FILE *login = fopen("usuario.bin", "r+b");
@@ -801,27 +823,24 @@ int depositar_real(char cpf[12]) {
 // funcao para sacar reais --------------------------------------------------------------------------------------------------------
 int sacar_real(char cpf[12]){
   float valor_sacado, valor_disponivel;
-  int saque_aprovado = 0, resultado_scan = 0, aprovacao_valor = 0;
+  int saque_aprovado = 0, resultado_scan = 0, aprovacao_valor = 0, aprov = 0;
   // faz um loop pro usuario digitar o valor valido
   limpa();
   do {
     printf("Digite 0 para voltar ao menu principal.\n");
     printf("Digite o valor do saque: \n");
     resultado_scan = scanf("%f", &valor_sacado);
-
-    if (resultado_scan != 1) {
+    
+    if ( resultado_scan != 1) {
       limpa();
       printf("Entrada invalida, digite um numero.\n\n");
-
       // limpa o buffer de entrada
-      while (getchar() != '\n')
-        ;
-    }
-    
-    if (valor_sacado < 0) {
+      while (getchar() != '\n');
+      continue;
+    } else if ( valor_sacado < 0) {
       limpa();
       printf("Por favor digite um numero positivo.\n\n");
-      continue; // volta para inicio do loop para pedir o valor dnv
+      continue;
     } else if ( valor_sacado == 0){
       return 0;
     }
@@ -850,8 +869,9 @@ int sacar_real(char cpf[12]){
     fclose(login);
     if (aprovacao_valor == 1) {
       Login_senha(cpf);
+      aprov = 1;
     }
-  } while (resultado_scan != 1);
+  } while (aprov != 1);
   
   // abre o arquivo binario em read e escrita
   FILE *login = fopen("usuario.bin", "r+b");
@@ -873,7 +893,7 @@ int sacar_real(char cpf[12]){
     }
   }
   fclose(login);
-
+  escrever_extrato(cpf, 0, valor_sacado, 0, time(NULL), 0, 0);
   limpa();
   printf("Saque aprovado no valor de R$ %.2f\n", valor_sacado);
   printf("\nAperte enter para voltar.");
@@ -897,7 +917,6 @@ int comprar_cripto(char cpf[12]){
     if (resultado_scan != 1) {
       limpa();
       printf("Entrada invalida, digite um numero.\n\n");
-
       // limpa o buffer de entrada
       while (getchar() != '\n');
     }else if (opcao < 1 || opcao > 3) {
@@ -907,7 +926,7 @@ int comprar_cripto(char cpf[12]){
       opcao_certa = 1;
     }
     
-  } while (resultado_scan != 1 || opcao_certa != 1);
+  } while (opcao_certa != 1);
 
   Usuario usuario;
   // pega as variaveis de cotacao da cripto escolhida
@@ -1014,23 +1033,32 @@ int comprar_cripto(char cpf[12]){
       printf("Digite um numero.");
       limpar_buffer();
       continue;
-    }
-    if (valor_investido == 0){
+    } else if (valor_investido == 0){
       limpa();
       return 0;
     } else if (valor_investido < 0) {
       limpa();
       printf("digite um valor positivo.\n\n");
+      Sleep(1000);
+      limpa();
+      continue;
     } else if (valor_investido < valor_min) {
       limpa();
       printf("Valor minimo para comprar 0.001 %s: R$ %.2f\n\n", cripto, valor_min);
+      Sleep(1000);
+      limpa();
+      continue;
     } else if (valor_investido > carteira_reais) {
       limpa();
       printf("Voce nao tem saldo suficiente para investir R$ %.2f\n\n", valor_investido);
+      Sleep(1000);
+      limpa();
+      continue;
     } else {
+      Login_senha(cpf);
       aprov = 1;
     }
-    Login_senha(cpf);
+    
   }while (aprov == 0);
 
   // calcula o valor em cripto que o usuario comprou
@@ -1056,10 +1084,13 @@ int comprar_cripto(char cpf[12]){
       usuario.reais -= valor_investido;
       if (opcao == 1) {
         usuario.bitcoin += valor_investido_criptomoeda;
+        escrever_extrato(cpf, 1, valor_investido_criptomoeda, 1, time(NULL), taxa_compra, cotacao);
       }else if (opcao == 2) {
         usuario.ethereum += valor_investido_criptomoeda;
+        escrever_extrato(cpf, 1, valor_investido_criptomoeda, 2, time(NULL), taxa_compra, cotacao);
       } else if (opcao == 3) {
         usuario.ripple += valor_investido_criptomoeda;
+        escrever_extrato(cpf, 1, valor_investido_criptomoeda, 3, time(NULL), taxa_compra, cotacao);
       }
       
       fseek(arquivo_usuario, -sizeof(Usuario), SEEK_CUR); // volta para a posicao anterior
@@ -1220,7 +1251,7 @@ int vender_cripto(char cpf[12]){
         limpa();
         printf("Venda cancelada!");
         fflush(stdout);
-        Sleep(1);
+        Sleep(1000);
         return 0;
       } else if ( aceita == 1){
         aprov = 1;
@@ -1240,10 +1271,13 @@ int vender_cripto(char cpf[12]){
 
       if (opcao == 1) {
         usuario.bitcoin -= valor_vender;
+        escrever_extrato(cpf, 0, valor_vender, 1, time(NULL), taxa_venda, cotacao);
       }else if (opcao == 2) {
         usuario.ethereum -= valor_vender;
+        escrever_extrato(cpf, 0, valor_vender, 2, time(NULL), taxa_venda, cotacao);
       } else if (opcao == 3) {
         usuario.ripple -= valor_vender;
+        escrever_extrato(cpf, 0, valor_vender, 3, time(NULL), taxa_venda, cotacao);
       }
 
       fseek(arquivo_usuario, -sizeof(Usuario), SEEK_CUR); // volta para a posicao anterior
@@ -1269,22 +1303,28 @@ int atualizar_cotacao(){
   Criptomoedas criptomoedas;
   // gera um valor aleatorio entre -5% e 5%
   float variacao = (rand() % 11 - 5) / 100.0;  // numero entre -0.05 e 0.05
-
+  limpa();
   FILE* arquivo_cripto = fopen("criptomoedas.bin", "r+b");
   if (!arquivo_cripto){
     printf("Erro ao abrir o arquivo\n");
     return 1;
   }
   fread(&criptomoedas, sizeof(Criptomoedas), 1, arquivo_cripto);
+  printf("Bitcoin pre ajuste: R$ %.2f\n",criptomoedas.bitcoin_cotacao);
   criptomoedas.bitcoin_cotacao += criptomoedas.bitcoin_cotacao * variacao;
+  printf("Bitcoin pos ajuste: R$ %.2f\n\n",criptomoedas.bitcoin_cotacao);
+  printf("Ethereum pre ajuste: R$ %.2f\n",criptomoedas.ethereum_cotacao);
   criptomoedas.ethereum_cotacao += criptomoedas.ethereum_cotacao * variacao;
+  printf("Ethereum pos ajuste: R$ %.2f\n\n",criptomoedas.ethereum_cotacao);
+  printf("Ripple pre ajuste: R$ %.2f\n",criptomoedas.ripple_cotacao);
   criptomoedas.ripple_cotacao += criptomoedas.ripple_cotacao * variacao;
+  printf("Ripple pos ajuste: R$ %.2f\n\n",criptomoedas.ripple_cotacao);
   fseek(arquivo_cripto, -sizeof(Criptomoedas), SEEK_CUR); // volta para a posicao anterior
   fwrite(&criptomoedas, sizeof(Criptomoedas), 1, arquivo_cripto); // grava a atualizacao
   fclose(arquivo_cripto);
 
   // printa que foi atualizada
-  limpa();
+  
   printf("Cotacao atualizada com sucesso!\n\n");
   printf("Aperte enter para voltar.\n");
   
@@ -1368,7 +1408,7 @@ int main() {
         limpa();
         printf("Por favor, digite uma entrada valida!\n");
         caso = -1;
-        Sleep(2);
+        Sleep(1000);
         break;
       }
       if (caso != -2) {
