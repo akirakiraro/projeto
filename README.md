@@ -24,7 +24,7 @@ O programa foi desenvolvido para criar os arquivos necessários na primeira exec
   * CPF: 123.123.123-12
   * Senha: 123123
     
-Ao iniciar o programa, será solicitado ao usuário o CPF e a senha para login. Caso o cadastro já tenha sido feito por um administrador ou outro usuário, o acesso será liberado para o uso completo das funcionalidades.
+Ao iniciar o programa, será solicitado ao usuário o CPF e a senha para login. Caso o cadastro já tenha sido feito por um usuário, o acesso será liberado para o uso completo das funcionalidades.
 
 ### Funcionalidades do Programa
 
