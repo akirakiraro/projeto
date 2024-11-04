@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../Arquivos/common.h"
 
 int main() {
   long long cpf_main;
