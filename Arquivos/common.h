@@ -46,11 +46,16 @@ typedef struct {
 // FUNCOES.C
 void delay(int tempo_ms);
 void limpar_buffer();
+void limpa_tela ();
 void formatar_cpf(const char *cpf_original, char *cpf_formatado);
+int escolher_operacao(int min_op, int max_op, char *texto);
+void encerrar_programa ();
+
 
 // MENU.C
 void Menu_usuario ();
 void Menu_inicial_usuario ();
-
+void Menu_Adm ();
+void Menu_inicial_adm ();
 
 #endif
