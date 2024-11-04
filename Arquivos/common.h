@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -45,11 +46,15 @@ typedef struct {
 
 // FUNCOES.C
 void delay(int tempo_ms);
+void verificar_buffer(char *entrada);
 void limpar_buffer();
 void limpa_tela ();
 void formatar_cpf(const char *cpf_original, char *cpf_formatado);
 int escolher_operacao(int min_op, int max_op, char *texto);
 void encerrar_programa ();
+FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura);
+int criar_arquivo(const char* nome_arquivo);
+int verifica_cpf (const char *cpf);
 
 
 // MENU.C
@@ -57,5 +62,11 @@ void Menu_usuario ();
 void Menu_inicial_usuario ();
 void Menu_Adm ();
 void Menu_inicial_adm ();
+
+// USUARIO.C
+int adicionar_administrador ();
+int registro_cpf (char *CPF_digitado);
+
+
 
 #endif

@@ -8,6 +8,16 @@ void delay(int tempo_ms) {
     #endif
 }
 
+void verificar_buffer(char *entrada) {
+    size_t len = strlen(entrada);
+
+    if (len > 0 && entrada[len - 1] == '\n') {
+        entrada[len - 1] = '\0';
+    } else {
+        limpar_buffer();
+    }
+}
+
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) { }
@@ -51,33 +61,41 @@ void encerrar_programa () {
   exit(0);
 }
 
+FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura) {
+    FILE *ponteiro_arquivo = fopen(nome_arquivo, modo_abertura);
 
-
-
-// mudar funcao pq nn vai existir mais
-const char *moeda_to_string(int moeda) {
-  switch (moeda) {
-  case 0:
-    return "Real";
-  case 1:
-    return "Bitcoin";
-  case 2:
-    return "Ethereum";
-  case 3:
-    return "Ripple";
-  default:
-    return "Desconhecida";
-  }
+    if (ponteiro_arquivo == NULL) {
+        if (criar_arquivo(nome_arquivo) == -1) {
+            printf("Erro na abertura do arquivo.\n");
+            return NULL; // retorna ponteiro como NULL
+        }
+        ponteiro_arquivo = fopen(nome_arquivo, modo_abertura); 
+    }
+    
+    return ponteiro_arquivo;
 }
 
+int criar_arquivo(const char* nome_arquivo) {
+    FILE *ponteiro_arquivo = fopen(nome_arquivo, "w");
 
+    if (ponteiro_arquivo == NULL) {
+        printf("Erro ao criar arquivo.\n");
+        return -1;
+    }
 
+    fclose(ponteiro_arquivo);
+    return 0;
+}
 
-
-
-
-
-
+int verifica_cpf (const char *cpf) {
+  while (*cpf) {
+    if (!isdigit(*cpf)) {
+      return 0;
+    }
+    cpf++;
+  }
+  return 1;
+}
 
 
 

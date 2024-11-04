@@ -12,7 +12,8 @@ int main() {
       case 0:
         encerrar_programa ();
       case 1:
-        break;
+        adicionar_administrador();
+        
       case 2:
         break;
     }
