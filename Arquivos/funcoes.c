@@ -87,7 +87,7 @@ int criar_arquivo(const char* nome_arquivo) {
     return 0;
 }
 
-int verifica_cpf (const char *cpf) {
+int verifica_numero (const char *cpf) {
   while (*cpf) {
     if (!isdigit(*cpf)) {
       return 0;

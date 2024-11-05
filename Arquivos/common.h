@@ -54,7 +54,7 @@ int escolher_operacao(int min_op, int max_op, char *texto);
 void encerrar_programa ();
 FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura);
 int criar_arquivo(const char* nome_arquivo);
-int verifica_cpf (const char *cpf);
+int verifica_numero (const char *cpf);
 
 
 // MENU.C
@@ -66,6 +66,7 @@ void Menu_inicial_adm ();
 // USUARIO.C
 int adicionar_administrador ();
 int registro_cpf (char *CPF_digitado);
+int registro_senha (char *senha_digitada);
 
 
 
