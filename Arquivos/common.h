@@ -68,6 +68,9 @@ void Menu_inicial_adm ();
 int adicionar_administrador ();
 int registro_cpf (char *CPF_digitado);
 int registro_senha (char *senha_digitada);
+int logar_administrador();
+int logar_cpf (char *CPF_digitado);
+int logar_senha (char *CPF_usuario);
 
 
 
