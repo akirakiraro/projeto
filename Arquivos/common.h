@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+#include <errno.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -34,7 +35,7 @@ typedef struct {
 
 typedef struct {
   char cpf[12];
-  char senha[6];
+  char senha[7];
 } Usuario;
 
 typedef struct {
@@ -53,7 +54,7 @@ void formatar_cpf(const char *cpf_original, char *cpf_formatado);
 int escolher_operacao(int min_op, int max_op, char *texto);
 void encerrar_programa ();
 FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura);
-int criar_arquivo(const char* nome_arquivo);
+int criar_arquivo_binario(const char* nome_arquivo, const char* modo_abertura);
 int verifica_numero (const char *cpf);
 
 

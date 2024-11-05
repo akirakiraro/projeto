@@ -71,16 +71,24 @@ FILE *abrir_arquivo(const char *nome_arquivo, const char *modo) {
   return arquivo;
 }
 
-int criar_arquivo(const char* nome_arquivo) {
-    FILE *ponteiro_arquivo = fopen(nome_arquivo, "w");
 
-    if (ponteiro_arquivo == NULL) {
-        printf("Erro ao criar arquivo.\n");
-        return -1;
-    }
+int criar_arquivo_binario(const char* nome_arquivo, const char* modo_abertura) {
+  FILE *teste_arquivo = fopen(nome_arquivo, "rb");
+  if (teste_arquivo != NULL) {
+    fclose(teste_arquivo);
+    printf("O arquivo '%s' já existe.\n", nome_arquivo);
+    return -1;
+  }
 
-    fclose(ponteiro_arquivo);
-    return 0;
+  FILE *ponteiro_arquivo = fopen(nome_arquivo, modo_abertura);
+  if (ponteiro_arquivo == NULL) {
+    printf("Erro ao criar arquivo: %s\n", strerror(errno));
+    delay(3000);
+    return -1;
+  }
+
+  fclose(ponteiro_arquivo);
+  return 0;
 }
 
 int verifica_numero (const char *cpf) {
