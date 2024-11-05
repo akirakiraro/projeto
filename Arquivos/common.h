@@ -64,7 +64,7 @@ void Menu_inicial_usuario ();
 void Menu_Adm ();
 void Menu_inicial_adm ();
 
-// USUARIO.C
+// REGISTRO_LOGIN.C
 int adicionar_administrador ();
 int registro_cpf (char *CPF_digitado);
 int registro_senha (char *senha_digitada);

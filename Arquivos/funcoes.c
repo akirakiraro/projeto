@@ -57,7 +57,7 @@ int escolher_operacao(int min_op, int max_op, char *texto) {
 void encerrar_programa () {
   limpa_tela ();
   printf("Programa encerrado com sucesso!\n");
-  printf("Feito por: Rodrigo Akira e Gustavo Nomura.\n");
+  printf("Feito por: Rodrigo Akira e Gustavo Nomura.\n\n");
   exit(0);
 }
 
