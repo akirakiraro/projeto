@@ -34,7 +34,7 @@ typedef struct {
 
 typedef struct {
   char cpf[12];
-  int senha;
+  char senha[6];
 } Usuario;
 
 typedef struct {

@@ -12,14 +12,13 @@ int main() {
       case 0:
         encerrar_programa ();
       case 1:
-        adicionar_administrador();
-        
-      case 2:
         break;
+      case 2:
+        adicionar_administrador();
     }
   } while (logado != 0);
   
   
-
+  
   return 0;
 }

@@ -2,12 +2,14 @@
 
 int adicionar_administrador () {
   char CPF[12], senha[6];
-  FILE *arquivo = abrir_arquivo ("Storage/Usuarios","ab");
+  FILE *arquivo = abrir_arquivo ("Storage/Usuarios.bin","ab");
   registro_cpf (CPF);
   registro_senha (senha);
-  
-  
 
+  Usuario novo_usuario;
+  snprintf(novo_usuario.cpf, sizeof(novo_usuario.cpf), CPF);
+  snprintf(novo_usuario.senha, sizeof(novo_usuario.senha), senha);
+  fwrite(&novo_usuario, sizeof(Usuario), 1, arquivo);
   fclose(arquivo);
   return 1;
 }

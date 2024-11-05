@@ -61,18 +61,14 @@ void encerrar_programa () {
   exit(0);
 }
 
-FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura) {
-    FILE *ponteiro_arquivo = fopen(nome_arquivo, modo_abertura);
+FILE *abrir_arquivo(const char *nome_arquivo, const char *modo) {
+  FILE *arquivo = fopen(nome_arquivo, modo);
 
-    if (ponteiro_arquivo == NULL) {
-        if (criar_arquivo(nome_arquivo) == -1) {
-            printf("Erro na abertura do arquivo.\n");
-            return NULL; // retorna ponteiro como NULL
-        }
-        ponteiro_arquivo = fopen(nome_arquivo, modo_abertura); 
-    }
-    
-    return ponteiro_arquivo;
+  if (arquivo == NULL) {
+    perror("Erro ao abrir o arquivo");
+  }
+
+  return arquivo;
 }
 
 int criar_arquivo(const char* nome_arquivo) {
