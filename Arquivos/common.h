@@ -68,10 +68,10 @@ void Menu_inicial_adm ();
 int adicionar_administrador ();
 int registro_cpf (char *CPF_digitado);
 int registro_senha (char *senha_digitada);
-int logar_administrador();
+int logar_administrador(char *CPF_logado);
 int logar_cpf (char *CPF_digitado);
 int logar_senha (char *CPF_usuario);
-
+int verifica_arquivo_adm();
 
 
 #endif
