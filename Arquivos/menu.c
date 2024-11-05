@@ -1,14 +1,14 @@
 #include "common.h"
 
-void Menu_inicial_usuario (){
-  limpa();
+void Menu_inicial_usuario () {
+  limpa_tela();
   printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
-  printf("1. Login.");
-  printf("0. Sair.");
+  printf("1. Login.\n");
+  printf("0. Sair.\n\n");
 }
 
-void Menu_usuario (){
-  limpa();
+void Menu_usuario () {
+  limpa_tela();
   printf("Bem vindo ====nome===== \n\n");
   printf("1. Consultar saldo.\n");
   printf("2. Consultar extrato.\n");
@@ -25,7 +25,7 @@ void Menu_usuario (){
 // ===================================
 
 void Menu_Adm () {
-  limpa();
+  limpa_tela();
   printf("Bem vindo ====nome===== \n\n");
   printf("1. Cadastrar novo investidor.\n");
   printf("2. Excluir investidor.\n");
@@ -37,12 +37,12 @@ void Menu_Adm () {
   printf("0. Sair\n\n");
 }
 
-void Menu_inicial_adm (){
-  limpa();
+void Menu_inicial_adm () {
+  limpa_tela();
   printf("Bem vindo ao Projeto 1 - Exchange de criptomoedas!\n\n");
-  printf("1. Login.");
-  printf("2. Registro.");
-  printf("0. Sair.");
+  printf("1. Login.\n");
+  printf("2. Registro.\n");
+  printf("0. Sair.\n\n");
 }
 
 
