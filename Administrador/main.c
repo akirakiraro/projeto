@@ -5,39 +5,40 @@
 int main() {
   
   char CPF_logado[12];
-
-  int logado = 0;
   do{
-    Menu_inicial_adm ();
-    switch (escolher_operacao(0,3,"a opcao")){
-      case 0:
-        encerrar_programa ();
+    int logado = 0;
+    do{
+      Menu_inicial_adm ();
+      switch (escolher_operacao(0,3,"a opcao")){
+        case 0:
+          encerrar_programa ();
 
-      case 1:
-        if (logar_administrador(CPF_logado) == 1) {
-          logado = 1;
-        }
-        break;
+        case 1:
+          if (logar_administrador(CPF_logado) == 1) {
+            logado = 1;
+          }
+          break;
 
-      case 2:
-        adicionar_administrador();
-        break;
+        case 2:
+          adicionar_administrador();
+          break;
 
-    }
-  } while (logado == 0);
+      }
+    } while (logado == 0);
 
 
-  int sair = 0;
-  do{
-    Menu_Adm();
-    switch (escolher_operacao(0,7,"a opcao")){
-      case 0:
-        encerrar_programa ();
+    int sair = 0;
+    do{
+      Menu_Adm();
+      switch (escolher_operacao(0,7,"a opcao")){
+        case 0:
+          encerrar_programa ();
+        case 1:
+          
+          break;
 
-    }
-  } while (sair == 0);
-  
-  
-  
+      }
+    } while (sair == 0);
+  } while (true);
   return 0;
 }
