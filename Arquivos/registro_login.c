@@ -5,14 +5,14 @@
 //================================
 int adicionar_administrador() {
   char CPF[12], senha[7];
-  criar_arquivo_binario("Storage/Usuarios.bin", "wb");
+  criar_arquivo_binario("Storage/Administradores.bin", "wb");
 
   if (registro_cpf(CPF) == -1) {
     return -1;
   }
   registro_senha(senha);
 
-  FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "ab");
+  FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "ab");
   Usuario novo_usuario;
   snprintf(novo_usuario.cpf, sizeof(novo_usuario.cpf), "%s", CPF);
   snprintf(novo_usuario.senha, sizeof(novo_usuario.senha), "%s", senha);
@@ -44,7 +44,7 @@ int registro_cpf(char *CPF_digitado) {
     }
 
     // Verifica se ja existe um CPF igual
-    FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "rb");
+    FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "rb");
 
     CPF_aprovado = 1;
     Usuario usuario;
@@ -123,7 +123,7 @@ int logar_cpf (char *CPF_digitado) {
     }
 
     // Verifica se ja existe um CPF igual
-    FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "rb");
+    FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "rb");
 
     Usuario usuario;
     while (fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
@@ -157,7 +157,7 @@ int logar_senha (char *CPF_usuario) {
       continue;
     }
 
-    FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "rb");
+    FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "rb");
     Usuario usuario;
     while (fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
       if (strcmp(usuario.cpf, CPF_usuario) == 0) {
