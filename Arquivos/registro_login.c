@@ -93,6 +93,10 @@ int registro_senha(char *senha_digitada) {
 int logar_administrador(char *CPF_logado) {
   char CPF[12], senha[7];
   
+  if (verifica_arquivo_adm() == -1) {
+    return -1;
+  }
+
   if (logar_cpf(CPF) == -1) {
     return -1;
   }
@@ -178,5 +182,22 @@ int logar_senha (char *CPF_usuario) {
   return 0;
 }
 
+int verifica_arquivo_adm() {
+  FILE *arquivo = fopen("Storage/Administradores.bin", "rb");
+  if (arquivo == NULL) {
+    return -1;
+  }
 
+  Usuario usuario;
+  int existe_cpf = 0;
+
+  while (fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
+    if (usuario.cpf[0] != '\0') {
+      return 1;
+    }
+  }
+
+  fclose(arquivo);
+  return -1;
+}
 
