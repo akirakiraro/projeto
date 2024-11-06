@@ -34,7 +34,10 @@ int main() {
         case 0:
           encerrar_programa ();
         case 1:
-          
+          criar_investidor();
+          break;
+        case 2:
+          excluir_investidor();
           break;
 
       }
