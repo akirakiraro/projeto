@@ -85,5 +85,6 @@ int verifica_arquivo_adm();
 int verificar_nome_cripto (char *nome);
 int criar_criptomoeda();
 int excluir_criptomoeda();
+int atualizar_cripto ();
 
 #endif
