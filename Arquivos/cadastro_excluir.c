@@ -107,7 +107,7 @@ int excluir_usuario(const char *cpf_excluir) {
 
   Usuario *usuarios = (Usuario *)malloc(total_usuarios * sizeof(Usuario));
   if (usuarios == NULL) {
-    printf("Erro de memória.\n");
+    printf("Erro de memoria.\n");
     fclose(arquivo);
     return -1;
   }

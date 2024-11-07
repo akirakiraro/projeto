@@ -42,6 +42,9 @@ int main() {
         case 3:
           criar_criptomoeda();
           break;
+        case 4:
+          excluir_criptomoeda();
+          break;
       }
     } while (sair == 0);
   } while (true);
