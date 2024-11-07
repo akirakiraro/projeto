@@ -48,10 +48,10 @@ typedef struct {
 // CADASTRO_EXCLUIR.C
 int criar_investidor ();
 int CPF_novo_investidor (char *CPF_digitado);
-int senha_novo_investidor (char *senha_digitada);
 int excluir_investidor ();
 int CPF_excluir_investidor (char *CPF_digitado);
 int excluir_usuario (const char *cpf_excluir);
+int verifica_arquivo_usuarios();
 
 // FUNCOES.C
 void delay(int tempo_ms);

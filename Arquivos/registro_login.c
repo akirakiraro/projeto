@@ -26,7 +26,7 @@ int registro_cpf(char *CPF_digitado) {
   int CPF_aprovado;
 
   do {
-    
+    limpa_tela();
     if (pede_CPF(CPF_digitado) == -1) {
       return -1;
     }
@@ -75,7 +75,7 @@ int logar_cpf (char *CPF_digitado) {
   int CPF_aprovado = 0;
 
   do {
-    
+    limpa_tela();
     if (pede_CPF(CPF_digitado) == -1) {
       return -1;
     }

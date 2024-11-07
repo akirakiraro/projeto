@@ -104,7 +104,6 @@ int verifica_numero (const char *cpf) {
 int pede_CPF (char *CPF) {
   int aprovado = 0;
   do {
-    limpa_tela();
     printf("> Digite o CPF ou 0 para voltar.\n");
     printf("> CPF: ");
     fgets(CPF, 12, stdin);
@@ -131,7 +130,6 @@ int pede_senha (char *senha) {
   int senha_aprovada = 0;
 
   do {
-    limpa_tela();
     printf("> Digite a senha de 6 digitos.\n");
     printf("> Senha: ");
     fgets(senha, 7, stdin);
