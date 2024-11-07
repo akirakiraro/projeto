@@ -10,7 +10,7 @@ int adicionar_administrador() {
   if (registro_cpf(CPF) == -1) {
     return -1;
   }
-  registro_senha(senha);
+  pede_senha(senha);
 
   FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "ab");
   Usuario novo_usuario;
@@ -23,24 +23,12 @@ int adicionar_administrador() {
 }
 
 int registro_cpf(char *CPF_digitado) {
-  int CPF_aprovado = 0;
+  int CPF_aprovado;
 
   do {
-    limpa_tela();
-    printf("> Digite seu CPF sem pontos e traco: ");
-    fgets(CPF_digitado, 12, stdin);
-    verificar_buffer(CPF_digitado);
-
-    if (strcmp(CPF_digitado, "0") == 0) {
+    
+    if (pede_CPF(CPF_digitado) == -1) {
       return -1;
-    }
-
-    // Verifica se o usuario digitou 11 numeros
-    if (strlen(CPF_digitado) != 11 || !verifica_numero(CPF_digitado)) {
-      limpa_tela();
-      printf("Digite um CPF valido.\n");
-      delay(1500);
-      continue;
     }
 
     // Verifica se ja existe um CPF igual
@@ -61,28 +49,6 @@ int registro_cpf(char *CPF_digitado) {
     fclose(arquivo);
 
   } while (CPF_aprovado == 0);
-  return 1;
-}
-
-int registro_senha(char *senha_digitada) {
-  int senha_aprovada = 0;
-
-  do {
-    limpa_tela();
-    printf("> Digite sua senha de 6 digitos: ");
-    fgets(senha_digitada, 7, stdin);
-    verificar_buffer(senha_digitada);
-
-    if (strlen(senha_digitada) != 6 || !verifica_numero(senha_digitada)) {
-      limpa_tela();
-      printf("Digite uma senha valida.\n");
-      senha_aprovada = 0;
-      delay(1500);
-      continue;
-    } else {
-      senha_aprovada = 1;
-    }
-  } while (senha_aprovada == 0);
   return 1;
 }
 
@@ -109,24 +75,12 @@ int logar_cpf (char *CPF_digitado) {
   int CPF_aprovado = 0;
 
   do {
-    limpa_tela();
-    printf("> Digite seu CPF sem pontos e traco: ");
-    fgets(CPF_digitado, 12, stdin);
-    verificar_buffer(CPF_digitado);
-
-    if (strcmp(CPF_digitado, "0") == 0) {
+    
+    if (pede_CPF(CPF_digitado) == -1) {
       return -1;
     }
 
-    // Verifica se o usuario digitou 11 numeros
-    if (strlen(CPF_digitado) != 11 || !verifica_numero(CPF_digitado)) {
-      limpa_tela();
-      printf("Digite um CPF valido.\n");
-      delay(1500);
-      continue;
-    }
-
-    // Verifica se ja existe um CPF igual
+    // Verifica se ja existe o CPF
     FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "rb");
 
     Usuario usuario;
@@ -148,18 +102,8 @@ int logar_senha (char *CPF_usuario) {
   char senha_digitada[7];
 
   do {
-    limpa_tela();
-    printf("> Digite sua senha de 6 digitos: ");
-    fgets(senha_digitada, 7, stdin);
-    verificar_buffer(senha_digitada);
-
-    if (strlen(senha_digitada) != 6 || !verifica_numero(senha_digitada)) {
-      limpa_tela();
-      printf("Digite uma senha valida.\n");
-      senha_aprovada = 0;
-      delay(1500);
-      continue;
-    }
+    
+    pede_senha(senha_digitada);
 
     FILE *arquivo = abrir_arquivo("Storage/Administradores.bin", "rb");
     Usuario usuario;

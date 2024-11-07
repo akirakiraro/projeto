@@ -101,9 +101,54 @@ int verifica_numero (const char *cpf) {
   return 1;
 }
 
+int pede_CPF (char *CPF) {
+  int aprovado = 0;
+  do {
+    limpa_tela();
+    printf("> Digite o CPF ou 0 para voltar.\n");
+    printf("> CPF: ");
+    fgets(CPF, 12, stdin);
+    verificar_buffer(CPF);
 
+    if (strcmp(CPF, "0") == 0) {
+      return -1;
+    }
 
+    // Verifica se o usuario digitou 11 numeros
+    if (strlen(CPF) != 11 || !verifica_numero(CPF)) {
+      limpa_tela();
+      printf("Digite um CPF valido.\n");
+      delay(1500);
+      continue;
+    }
 
+    aprovado = 1;
+  } while (aprovado == 0);
+  return 1;
+}
+
+int pede_senha (char *senha) {
+  int senha_aprovada = 0;
+
+  do {
+    limpa_tela();
+    printf("> Digite a senha de 6 digitos.\n");
+    printf("> Senha: ");
+    fgets(senha, 7, stdin);
+    verificar_buffer(senha);
+
+    if (strlen(senha) != 6 || !verifica_numero(senha)) {
+      limpa_tela();
+      printf("Digite uma senha valida.\n");
+      senha_aprovada = 0;
+      delay(1500);
+      continue;
+    } else {
+      senha_aprovada = 1;
+    }
+  } while (senha_aprovada == 0);
+  return 1;
+}
 
 
 
