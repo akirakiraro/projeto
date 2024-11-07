@@ -45,6 +45,14 @@ typedef struct {
 } Moeda_usuario;
 
 
+// CADASTRO_EXCLUIR.C
+int criar_investidor ();
+int CPF_novo_investidor (char *CPF_digitado);
+int excluir_investidor ();
+int CPF_excluir_investidor (char *CPF_digitado);
+int excluir_usuario (const char *cpf_excluir);
+int verifica_arquivo_usuarios();
+
 // FUNCOES.C
 void delay(int tempo_ms);
 void verificar_buffer(char *entrada);
@@ -56,7 +64,8 @@ void encerrar_programa ();
 FILE* abrir_arquivo(const char* nome_arquivo, const char* modo_abertura);
 int criar_arquivo_binario(const char* nome_arquivo, const char* modo_abertura);
 int verifica_numero (const char *cpf);
-
+int pede_CPF (char *CPF);
+int pede_senha (char *senha);
 
 // MENU.C
 void Menu_usuario ();
@@ -67,11 +76,14 @@ void Menu_inicial_adm ();
 // REGISTRO_LOGIN.C
 int adicionar_administrador ();
 int registro_cpf (char *CPF_digitado);
-int registro_senha (char *senha_digitada);
 int logar_administrador(char *CPF_logado);
 int logar_cpf (char *CPF_digitado);
 int logar_senha (char *CPF_usuario);
 int verifica_arquivo_adm();
 
+// CRIPTO.C
+int verificar_nome_cripto (char *nome);
+int criar_criptomoeda();
+int excluir_criptomoeda();
 
 #endif
