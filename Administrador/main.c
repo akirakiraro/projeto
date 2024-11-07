@@ -45,6 +45,9 @@ int main() {
         case 4:
           excluir_criptomoeda();
           break;
+        case 7:
+          atualizar_cripto();
+          break;
       }
     } while (sair == 0);
   } while (true);

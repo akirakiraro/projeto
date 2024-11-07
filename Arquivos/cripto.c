@@ -250,7 +250,53 @@ int excluir_criptomoeda() {
     return 1;
 }
 
+int atualizar_cripto () {
+    int aprovado;
+    char nome_criptomoeda[20];
 
+    do{
+        limpa_tela();
+        printf("Digite o nome da Criptomoeda que deseja atualizar.\n");
+        printf("Nome: ");
+        fgets(nome_criptomoeda, 20, stdin);
+        verificar_buffer(nome_criptomoeda);
+
+        if (strcmp(nome_criptomoeda, "0") == 0) {
+            return -1;
+        }
+
+        if (verificar_nome_cripto(nome_criptomoeda) != -1) {
+            limpa_tela();
+            printf("Nao existe nenhuma criptomoeda com esse nome.\n");
+            printf("Verifique as maiusculas e minusculas.\n");
+            delay(1500);
+            aprovado = 0;
+        } else {
+            FILE *arquivo_cripto = abrir_arquivo("Storage/Criptomoedas.bin", "rb+");
+
+            Criptomoedas criptomoeda;
+
+            while (fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_cripto) == 1) {
+                if (strcmp(criptomoeda.Nome_Cripto, nome_criptomoeda) == 0) {
+                    printf("Cotacao atual: %.2f\n", criptomoeda.cotacao);
+                    printf("Digite a nova cotacao: ");
+                    if (scanf("%f", &criptomoeda.cotacao) != 1 || criptomoeda.cotacao <= 0) {
+                        printf("Entrada invalida.\n");
+                        fclose(arquivo_cripto);
+                        return -1;
+                    }
+
+                    fseek(arquivo_cripto, -sizeof(Criptomoedas), SEEK_CUR);
+                    fwrite(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_cripto);
+                    aprovado = 1;
+                    break;
+                }
+            }
+            fclose(arquivo_cripto);
+        }
+    } while (aprovado == 0);
+    return 1;
+}
 
 
 
