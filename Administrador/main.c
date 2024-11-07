@@ -39,7 +39,9 @@ int main() {
         case 2:
           excluir_investidor();
           break;
-
+        case 3:
+          criar_criptomoeda();
+          break;
       }
     } while (sair == 0);
   } while (true);

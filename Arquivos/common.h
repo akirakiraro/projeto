@@ -81,5 +81,7 @@ int logar_cpf (char *CPF_digitado);
 int logar_senha (char *CPF_usuario);
 int verifica_arquivo_adm();
 
+// CRIPTO.C
+int criar_criptomoeda();
 
 #endif
