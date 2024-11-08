@@ -80,6 +80,9 @@ int logar_administrador(char *CPF_logado);
 int logar_cpf (char *CPF_digitado);
 int logar_senha (char *CPF_usuario);
 int verifica_arquivo_adm();
+int login_usuario (char *CPF_logado);
+int logar_cpf_usuarios (char *CPF_digitado);
+int logar_senha_usuarios (char *CPF_usuario);
 
 // CRIPTO.C
 int verificar_nome_cripto (char *nome);
