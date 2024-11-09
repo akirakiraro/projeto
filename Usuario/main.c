@@ -47,6 +47,7 @@ int main() {
           break;
         case 6:
           // vender criptomoedas
+          vender_criptomoeda(CPF_logado);
           break;
         case 7:
           // atualizar cotacao

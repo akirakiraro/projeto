@@ -73,6 +73,7 @@ void Menu_usuario ();
 void Menu_inicial_usuario ();
 void Menu_Adm ();
 void Menu_inicial_adm ();
+void mostrar_criptomoedas ();
 
 // REGISTRO_LOGIN.C
 int adicionar_administrador ();
@@ -91,12 +92,13 @@ int criar_criptomoeda();
 int excluir_criptomoeda();
 int atualizar_cripto ();
 int comprar_criptomoeda (char cpf[12]);
-void mostrar_criptomoedas ();
+int vender_criptomoeda (char cpf[12]);
 
 // EXCHANGE_REAL.C
 int depositar_real(char cpf[12]);
 int sacar_real(char cpf[12]);
 int verifica_saque (char cpf[12], float *valor_disponivel);
 int consultar_saldo (char cpf[12]);
+
 
 #endif

@@ -383,6 +383,8 @@ int comprar_criptomoeda (char cpf[12]) {
         saldo.quantidade = 0;
     }
 
+    fclose(arquivo_Saldo_Criptomoedas);
+
     float quantidade_comprada;
     aprovado = 0;
     do {        
@@ -479,29 +481,154 @@ int comprar_criptomoeda (char cpf[12]) {
     return 1;
 }
 
-void mostrar_criptomoedas () {
-    FILE *arquivo_criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+int vender_criptomoeda (char cpf[12]) {
+    float saldo_reais;
+    limpa_tela();
 
-    Criptomoedas criptomoeda;
+    FILE *arquivo_usuarios = abrir_arquivo("Storage/Usuarios.bin","rb");
 
-    printf("|----------------------------------------------------------------|\n");
-    printf("|                    CRIPTOMOEDAS DISPONIVEIS                    |\n");
-    printf("|----------------------------------------------------------------|\n");
-    printf("| Nome             taxa venda    taxa compra    cotacao atual    |\n");
-    printf("|----------------------------------------------------------------|\n");
+    Usuario usuario;
 
+    while(fread(&usuario,sizeof(Usuario), 1, arquivo_usuarios) == 1) {
+        if (strcmp(usuario.cpf, cpf) == 0) {
+            saldo_reais = usuario.real;
+        }
+    }
+    fclose(arquivo_usuarios);
 
-    while(fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_criptomoedas) == 1) {
-        printf("| %-20s %02d %%          %02d %%       R$ %-13.2f |\n", 
-        criptomoeda.Nome_Cripto, 
-        criptomoeda.taxa_venda, 
-        criptomoeda.taxa_compra, 
-        criptomoeda.cotacao);
+    char nome_criptomoeda[20];
+    int aprovado = 0;
+
+    do{
+        limpa_tela();
+        mostrar_criptomoedas(); // arrumar ==============================================
+        printf("> Digite 0 para voltar ou o nome da Criptomoeda que deseja vender.\n");
+        printf("> Nome: ");
+        fgets(nome_criptomoeda, 20, stdin);
+        verificar_buffer(nome_criptomoeda);
+
+        if (strcmp(nome_criptomoeda, "0") == 0) {
+            return -1;
+        }
+
+        if (verificar_nome_cripto(nome_criptomoeda) == -1) {
+            aprovado = 1;
+        } else {
+            limpa_tela();
+            printf("Nao existe uma criptomoeda com esse nome.\n");
+            delay(1500);
+            aprovado = 0;
+        }
+
+    } while (aprovado == 0);
+
+    FILE *arquivo_Saldo_Criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","rb");
+    Moeda_usuario saldo;
+
+    int cripto_encontrada = 0;
+
+    while(fread(&saldo, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas) == 1) {
+        if (strcmp(saldo.cpf, cpf) == 0) {
+            if (strcmp(saldo.criptomoeda, nome_criptomoeda) == 0) {
+                cripto_encontrada = 1;
+                break;
+            }
+        }
     }
 
-    printf("|----------------------------------------------------------------|\n\n");
+    fclose(arquivo_Saldo_Criptomoedas);
 
-    fclose(arquivo_criptomoedas);
+    FILE *arquivo_criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+    Criptomoedas criptomoeda;
+
+    while(fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_criptomoedas) == 1) {
+        if (strcmp(criptomoeda.Nome_Cripto, nome_criptomoeda) == 0) {
+            break;
+        }
+    }
+
+    float quantidade_vendida;
+    aprovado = 0;
+    do {        
+        limpa_tela();
+        printf("Criptomoeda: %s\n", criptomoeda.Nome_Cripto);
+        printf("Taxa de Venda: %02d %%\n", criptomoeda.taxa_venda);
+        printf("Taxa de Compra: %02d %%\n", criptomoeda.taxa_compra);
+        printf("Cotacao atual: R$ %.2f\n\n", criptomoeda.cotacao);
+
+        printf("Saldo atual: R$ %.2f\n", saldo_reais);
+        printf("Saldo de criptomoeda atual: %.3f\n", saldo.quantidade);
+        
+        printf("Digite a quantidade de %s que deseja vender.\n", criptomoeda.Nome_Cripto);
+        printf("Quantidade: ");
+        if (scanf("%f", &quantidade_vendida) != 1) {
+            limpa_tela();
+            printf("Digite um numero valido.\n");
+            delay(1500);
+            aprovado = 0;
+            while(getchar() != '\n');
+        } else if (quantidade_vendida == 0) {
+            return 0;
+        } else if (quantidade_vendida <= 0.001) {
+            limpa_tela();
+            printf("Digite uma quantidade acima de 0.001 %s.\n", criptomoeda.Nome_Cripto);
+            delay(1500);
+            aprovado = 0;
+            while(getchar() != '\n');
+        } else if (quantidade_vendida > saldo.quantidade) {
+            limpa_tela();
+            printf("Saldo de %s indisponivel.\n", saldo.quantidade);
+            aprovado = 0;
+            while(getchar() != '\n');
+            delay(1500);
+        } else {
+            aprovado = 1;
+        }
+
+    } while (aprovado == 0);
+
+    float valor_vendido_sem_taxa, valor_vendido;
+
+    valor_vendido_sem_taxa =  (quantidade_vendida * criptomoeda.cotacao);
+    valor_vendido = valor_vendido_sem_taxa - ((valor_vendido_sem_taxa / 100) * criptomoeda.taxa_venda);
+
+    arquivo_usuarios = abrir_arquivo("Storage/Usuarios.bin","rb+");
+    Usuario usuario2;
+    while(fread(&usuario2, sizeof(Usuario), 1, arquivo_usuarios) == 1) {
+        if (strcmp(usuario2.cpf, cpf) == 0) {
+            usuario2.real += valor_vendido;
+
+            fseek(arquivo_usuarios, -sizeof(Usuario), SEEK_CUR);
+            fwrite(&usuario2, sizeof(Usuario), 1, arquivo_usuarios);
+            fclose(arquivo_usuarios);
+            break; 
+        }
+    }
+
+
+    arquivo_Saldo_Criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","rb+");
+    Moeda_usuario saldo_cripto;
+
+
+    while(fread(&saldo_cripto, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas) == 1) {
+        if (strcmp(saldo_cripto.cpf, cpf) == 0) {
+            if (strcmp(saldo_cripto.criptomoeda, criptomoeda.Nome_Cripto) == 0) {
+                saldo_cripto.quantidade -= quantidade_vendida;
+
+                fseek(arquivo_Saldo_Criptomoedas, -sizeof(Moeda_usuario), SEEK_CUR);
+                fwrite(&saldo_cripto, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas);
+                break;
+            }
+        }
+    }
+
+    fclose(arquivo_Saldo_Criptomoedas);
+
+    limpa_tela();
+    printf("A sua venda de %.3f de %s foi realizada com sucesso.\n", quantidade_vendida, criptomoeda.Nome_Cripto);
+    delay(1500);
+
+    return 1;
 }
 
 
