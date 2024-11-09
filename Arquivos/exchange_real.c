@@ -137,3 +137,30 @@ int verifica_saque (char cpf[12], float *valor_disponivel) {
     }
   }
 }
+
+int consultar_saldo (char cpf[12]) {
+  float Saldo_reais;
+
+  FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "rb");
+
+  Usuario usuario;
+  
+  while(fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
+    if (strcmp(usuario.cpf, cpf) == 0) {
+      Saldo_reais = usuario.real;
+      break;
+    }
+  }
+
+  // espera ate ter as criptomoedas
+  limpa_tela();
+  printf("CONSULTAR SALDO\n\n");
+  printf("CPF: %s\n", cpf);
+  printf("Saldo: R$ %.2f\n", Saldo_reais);
+  printf("criotomoedas\n");
+
+  printf("Aperte enter para voltar ao menu.\n");
+  getchar();
+  return 1;
+}
+
