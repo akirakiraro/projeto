@@ -36,6 +36,7 @@ typedef struct {
 typedef struct {
   char cpf[12];
   char senha[7];
+  float real;
 } Usuario;
 
 typedef struct {
@@ -80,11 +81,19 @@ int logar_administrador(char *CPF_logado);
 int logar_cpf (char *CPF_digitado);
 int logar_senha (char *CPF_usuario);
 int verifica_arquivo_adm();
+int login_usuario (char *CPF_logado);
+int logar_cpf_usuarios (char *CPF_digitado);
+int logar_senha_usuarios (char *CPF_usuario);
 
 // CRIPTO.C
 int verificar_nome_cripto (char *nome);
 int criar_criptomoeda();
 int excluir_criptomoeda();
 int atualizar_cripto ();
+
+// EXCHANGE_REAL.C
+int depositar_real(char cpf[12]);
+int sacar_real(char cpf[12]);
+int verifica_saque (char cpf[12], float *valor_disponivel);
 
 #endif

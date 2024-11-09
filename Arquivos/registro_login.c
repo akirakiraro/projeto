@@ -145,3 +145,83 @@ int verifica_arquivo_adm() {
   return -1;
 }
 
+// parte de usuarios
+
+int login_usuario (char *CPF_logado) {
+  char cpf[12], senha[7];
+
+  // verifica arquivo
+  if (verifica_arquivo_usuarios() == -1) {
+    return -1;
+  }
+
+  // login de cpf
+  if (logar_cpf_usuarios(cpf) == -1) {
+    return -1;
+  }
+
+  // login de senha
+  logar_senha_usuarios(cpf);
+  strcpy(CPF_logado, cpf);
+  return 1;
+}
+
+int logar_cpf_usuarios (char *CPF_digitado) {
+  int CPF_aprovado = 0;
+
+  do {
+    limpa_tela();
+    if (pede_CPF(CPF_digitado) == -1) {
+      return -1;
+    }
+
+    // Verifica se ja existe o CPF
+    FILE *arquivo = abrir_arquivo("Storage/Usuarios.bin", "rb");
+
+    Usuario usuario;
+    while (fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
+      if (strcmp(usuario.cpf, CPF_digitado) == 0) {
+        CPF_aprovado = 1;
+        return 1;
+      }
+    }
+
+    fclose(arquivo);
+
+  } while (CPF_aprovado == 0);
+  return -1;
+}
+
+int logar_senha_usuarios (char *CPF_usuario) {
+  int senha_aprovada = 0;
+  char senha_digitada[7];
+
+  do {
+    
+    pede_senha(senha_digitada);
+
+    FILE *arquivo = abrir_arquivo("Storage/usuarios.bin", "rb");
+    Usuario usuario;
+    while (fread(&usuario, sizeof(Usuario), 1, arquivo) == 1) {
+      if (strcmp(usuario.cpf, CPF_usuario) == 0) {
+        if (strcmp(usuario.senha, senha_digitada) == 0) {
+          printf("Senha aprovada.\n");
+          senha_aprovada = 1;
+          return 1;
+        } else {
+          limpa_tela();
+          printf("Senha incorreta.\n");
+          delay(1500);
+          break;
+        }
+      }
+    }
+  } while (senha_aprovada == 0);
+
+  return 0;
+}
+
+
+
+
+

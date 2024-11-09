@@ -21,6 +21,7 @@ int criar_investidor () {
   Usuario novo_usuario;
   snprintf(novo_usuario.cpf, sizeof(novo_usuario.cpf), "%s", CPF);
   snprintf(novo_usuario.senha, sizeof(novo_usuario.senha), "%s", senha);
+  novo_usuario.real = 0;
   fwrite(&novo_usuario, sizeof(Usuario), 1, arquivo);
 
   fclose(arquivo);
