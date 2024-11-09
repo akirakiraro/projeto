@@ -316,14 +316,165 @@ int comprar_criptomoeda (char cpf[12]) {
     fclose(arquivo_usuarios);
 
     char nome_criptomoeda[20];
+    int aprovado = 0;
 
-    mostrar_criptomoedas();
+
+    do{
+        limpa_tela();
+        mostrar_criptomoedas();
+        printf("> Digite 0 para voltar ou o nome da Criptomoeda que deseja comprar.\n");
+        printf("> Saldo atual: R$ %.2f\n", saldo_reais);
+        printf("> Nome: ");
+        fgets(nome_criptomoeda, 20, stdin);
+        verificar_buffer(nome_criptomoeda);
+
+        if (strcmp(nome_criptomoeda, "0") == 0) {
+            return -1;
+        }
+
+        if (verificar_nome_cripto(nome_criptomoeda) == -1) {
+            aprovado = 1;
+        } else {
+            limpa_tela();
+            printf("Nao existe uma criptomoeda com esse nome.\n");
+            delay(1500);
+            aprovado = 0;
+        }
+
+    } while (aprovado == 0);
+
+    float valor_minimo_compra, valor_minimo_sem_taxa;
+
+    FILE *arquivo_criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+    Criptomoedas criptomoeda;
+
+    while(fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_criptomoedas) == 1) {
+        if (strcmp(criptomoeda.Nome_Cripto, nome_criptomoeda) == 0) {
+            valor_minimo_sem_taxa = 0.001 * criptomoeda.cotacao;
+            valor_minimo_compra = valor_minimo_sem_taxa + ((valor_minimo_sem_taxa / 100) * criptomoeda.taxa_compra);
+            if (saldo_reais < valor_minimo_compra) {
+                limpa_tela();
+                printf("> Voce nao possui o saldo minimo para comprar essa criptomoeda.\n");
+                printf("> Valor minimo de compra: R$ %.2f\n", valor_minimo_compra);
+                delay(2000);
+                fclose(arquivo_criptomoedas);
+                return 0;
+            }
+            break;
+        }
+    }
+    fclose(arquivo_criptomoedas);
+
+    FILE *arquivo_Saldo_Criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","rb");
+    Moeda_usuario saldo;
+
+    int cripto_encontrada = 0;
+
+    while(fread(&saldo, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas) == 1) {
+        if (strcmp(saldo.cpf, cpf) == 0) {
+            if (strcmp(saldo.criptomoeda, criptomoeda.Nome_Cripto) == 0) {
+                cripto_encontrada = 1;
+                break;
+            }
+        }
+    }
+
+    if (cripto_encontrada == 0) {
+        saldo.quantidade = 0;
+    }
+
+    float quantidade_comprada;
+    aprovado = 0;
+    do {        
+        limpa_tela();
+        printf("Criptomoeda: %s\n", criptomoeda.Nome_Cripto);
+        printf("Taxa de Venda: %02d %%\n", criptomoeda.taxa_venda);
+        printf("Taxa de Compra: %02d %%\n", criptomoeda.taxa_compra);
+        printf("Cotacao atual: R$ %.2f\n\n", criptomoeda.cotacao);
+
+        printf("Saldo atual: R$ %.2f\n", saldo_reais);
+        printf("Saldo de criptomoeda atual: %.3f\n", saldo.quantidade);
+        if (valor_minimo_compra < 0.009) {
+            printf("\n");
+        } else {
+            printf("Valor minimo de investimento: %.2f\n\n", valor_minimo_compra);
+        }
+        
+        printf("Digite a quantidade de %s que deseja comprar.\n", criptomoeda.Nome_Cripto);
+        printf("Quantidade: ");
+        if (scanf("%f", &quantidade_comprada) != 1) {
+            limpa_tela();
+            printf("Digite um numero valido.\n");
+            delay(1500);
+            limpa_tela();
+            aprovado = 0;
+            while(getchar() != '\n');
+        } else if (quantidade_comprada == 0) {
+            return 0;
+        } else if (quantidade_comprada < 0.001) {
+            limpa_tela();
+            printf("Digite uma quantidade acima de 0.001 %s.\n", criptomoeda.Nome_Cripto);
+            delay(1500);
+            limpa_tela();
+            aprovado = 0;
+            while(getchar() != '\n');
+        } else {
+            aprovado = 1;
+        }
+
+    } while (aprovado == 0);
+
+    float valor_comprado_sem_taxa, valor_comprado;
+
+    valor_comprado_sem_taxa =  (quantidade_comprada * criptomoeda.cotacao);
+    valor_comprado = valor_comprado_sem_taxa + ((valor_comprado_sem_taxa / 100) * criptomoeda.taxa_compra);
+
+    arquivo_usuarios = abrir_arquivo("Storage/Usuarios.bin","rb+");
+    Usuario usuario2;
+    while(fread(&usuario2, sizeof(Usuario), 1, arquivo_usuarios) == 1) {
+        if (strcmp(usuario2.cpf, cpf) == 0) {
+            usuario2.real -= valor_comprado;
+
+            fseek(arquivo_usuarios, -sizeof(Usuario), SEEK_CUR);
+            fwrite(&usuario2, sizeof(Usuario), 1, arquivo_usuarios);
+            fclose(arquivo_usuarios);
+            break; 
+        }
+    }
 
 
-    printf("> Digite o nome da Criptomoeda que deseja comprar.\n");
-    printf("> Nome: ");
+    arquivo_Saldo_Criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","rb+");
+    Moeda_usuario saldo_cripto;
 
-    getchar();
+    aprovado = 0;
+
+    while(fread(&saldo_cripto, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas) == 1) {
+        if (strcmp(saldo_cripto.cpf, cpf) == 0) {
+            if (strcmp(saldo_cripto.criptomoeda, criptomoeda.Nome_Cripto) == 0) {
+                saldo_cripto.quantidade += quantidade_comprada;
+                aprovado = 1;
+
+                fseek(arquivo_Saldo_Criptomoedas, -sizeof(Moeda_usuario), SEEK_CUR);
+                fwrite(&saldo_cripto, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas);
+                break;
+            }
+        }
+    }
+
+    fclose(arquivo_Saldo_Criptomoedas);
+    
+    if (aprovado == 0) {
+        arquivo_Saldo_Criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","ab");
+        strcpy(saldo_cripto.cpf, cpf);
+        strcpy(saldo_cripto.criptomoeda, criptomoeda.Nome_Cripto);
+        saldo_cripto.quantidade = quantidade_comprada;
+        fwrite(&saldo_cripto, sizeof(Moeda_usuario), 1, arquivo_Saldo_Criptomoedas);
+        fclose(arquivo_Saldo_Criptomoedas);
+    }
+
+    limpa_tela();
+    printf("A sua compra de %.3f de %s foi realizada com sucesso.\n", quantidade_comprada, criptomoeda.Nome_Cripto);
+    delay(1500);
 
     return 1;
 }
