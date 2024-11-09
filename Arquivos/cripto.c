@@ -298,10 +298,60 @@ int atualizar_cripto () {
     return 1;
 }
 
+// funcoes para usuairos
+
+int comprar_criptomoeda (char cpf[12]) {
+    float saldo_reais;
+    limpa_tela();
+
+    FILE *arquivo_usuarios = abrir_arquivo("Storage/Usuarios.bin","rb");
+
+    Usuario usuario;
+
+    while(fread(&usuario,sizeof(Usuario), 1, arquivo_usuarios) == 1) {
+        if (strcmp(usuario.cpf, cpf) == 0) {
+            saldo_reais = usuario.real;
+        }
+    }
+    fclose(arquivo_usuarios);
+
+    char nome_criptomoeda[20];
+
+    mostrar_criptomoedas();
 
 
+    printf("> Digite o nome da Criptomoeda que deseja comprar.\n");
+    printf("> Nome: ");
+
+    getchar();
+
+    return 1;
+}
+
+void mostrar_criptomoedas () {
+    FILE *arquivo_criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+
+    Criptomoedas criptomoeda;
+
+    printf("|----------------------------------------------------------------|\n");
+    printf("|                    CRIPTOMOEDAS DISPONIVEIS                    |\n");
+    printf("|----------------------------------------------------------------|\n");
+    printf("| Nome             taxa venda    taxa compra    cotacao atual    |\n");
+    printf("|----------------------------------------------------------------|\n");
 
 
+    while(fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_criptomoedas) == 1) {
+        printf("| %-20s %02d %%          %02d %%       R$ %-13.2f |\n", 
+        criptomoeda.Nome_Cripto, 
+        criptomoeda.taxa_venda, 
+        criptomoeda.taxa_compra, 
+        criptomoeda.cotacao);
+    }
+
+    printf("|----------------------------------------------------------------|\n\n");
+
+    fclose(arquivo_criptomoedas);
+}
 
 
 

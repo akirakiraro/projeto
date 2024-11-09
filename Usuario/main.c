@@ -43,6 +43,7 @@ int main() {
           break;
         case 5:
           // comprar criptomoedas
+          comprar_criptomoeda(CPF_logado);
           break;
         case 6:
           // vender criptomoedas

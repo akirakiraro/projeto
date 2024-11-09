@@ -90,6 +90,8 @@ int verificar_nome_cripto (char *nome);
 int criar_criptomoeda();
 int excluir_criptomoeda();
 int atualizar_cripto ();
+int comprar_criptomoeda (char cpf[12]);
+void mostrar_criptomoedas ();
 
 // EXCHANGE_REAL.C
 int depositar_real(char cpf[12]);
