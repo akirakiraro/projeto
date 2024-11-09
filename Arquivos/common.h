@@ -95,5 +95,6 @@ int atualizar_cripto ();
 int depositar_real(char cpf[12]);
 int sacar_real(char cpf[12]);
 int verifica_saque (char cpf[12], float *valor_disponivel);
+int consultar_saldo (char cpf[12]);
 
 #endif

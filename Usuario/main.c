@@ -28,7 +28,7 @@ int main() {
           encerrar_programa ();
         case 1:
           // consultar saldo
-          
+          consultar_saldo(CPF_logado);
           break;
         case 2:
           // consultar extrato
