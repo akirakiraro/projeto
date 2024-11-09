@@ -27,19 +27,28 @@ int main() {
         case 0:
           encerrar_programa ();
         case 1:
-          criar_investidor();
+          // consultar saldo
+          
           break;
         case 2:
-          excluir_investidor();
+          // consultar extrato
           break;
         case 3:
-          criar_criptomoeda();
+          // depositar reais
+          depositar_real(CPF_logado);
           break;
         case 4:
-          excluir_criptomoeda();
+          // sacar reais
+          sacar_real(CPF_logado);
+          break;
+        case 5:
+          // comprar criptomoedas
+          break;
+        case 6:
+          // vender criptomoedas
           break;
         case 7:
-          atualizar_cripto();
+          // atualizar cotacao
           break;
       }
     } while (sair == 0);
