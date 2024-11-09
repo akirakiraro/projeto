@@ -10,7 +10,7 @@ int depositar_real(char cpf[12]) {
     printf("Digite 0 para voltar ao menu principal.\n");
     printf("Digite o valor do deposito: \n");
 
-    if (scanf("%f", &valor_depositado) != 1 || valor_depositado < 0) {
+    if (scanf("%f", &valor_depositado) != 1 || valor_depositado <= 0) {
       if (valor_depositado == 0) {
         return 0;
       } else {
