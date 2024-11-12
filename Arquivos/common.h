@@ -93,6 +93,7 @@ int excluir_criptomoeda();
 int atualizar_cripto ();
 int comprar_criptomoeda (char cpf[12]);
 int vender_criptomoeda (char cpf[12]);
+int atualizar_cripto_usuario ();
 
 // EXCHANGE_REAL.C
 int depositar_real(char cpf[12]);

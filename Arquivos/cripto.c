@@ -631,7 +631,40 @@ int vender_criptomoeda (char cpf[12]) {
     return 1;
 }
 
+int atualizar_cripto_usuario () {
+    char nome_cripto_anterior[20];
+    float variacao, cotacao_antes, aleatorio;
+    srand(time(NULL));
 
+    FILE *arquivo_cripto = abrir_arquivo("Storage/Criptomoedas.bin","rb+");
+    Criptomoedas cripto;
+
+    while(fread(&cripto, sizeof(Criptomoedas), 1, arquivo_cripto) == 1) {
+        if (strcmp(cripto.Nome_Cripto, nome_cripto_anterior) == 0) {
+            break;
+        } else {
+            strcpy(nome_cripto_anterior, cripto.Nome_Cripto);
+        }
+
+        aleatorio = -5.0 + ((rand() % 101) / 10.0);
+        variacao = ((int) (aleatorio * 10) / 10.0);
+        cotacao_antes = cripto.cotacao;
+        cripto.cotacao = cotacao_antes * (100 - variacao) / 100;
+        if (cripto.cotacao < 0) {
+            cripto.cotacao = 0;
+        }
+
+        fseek(arquivo_cripto, -sizeof(Criptomoedas), SEEK_CUR);
+        fwrite(&cripto, sizeof(Criptomoedas), 1, arquivo_cripto);
+    }
+
+    fclose(arquivo_cripto);
+
+    limpa_tela();
+    printf("Todas as Criptomoedas foram atualizadas.\n");
+    delay(2000);
+    return 1;
+}
 
 
 

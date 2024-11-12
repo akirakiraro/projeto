@@ -51,6 +51,7 @@ int main() {
           break;
         case 7:
           // atualizar cotacao
+          atualizar_cripto_usuario();
           break;
       }
     } while (sair == 0);
