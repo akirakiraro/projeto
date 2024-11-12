@@ -32,6 +32,8 @@ int main() {
           break;
         case 2:
           // consultar extrato
+          ler_extrato(CPF_logado);
+          getchar();
           break;
         case 3:
           // depositar reais

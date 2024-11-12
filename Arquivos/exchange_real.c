@@ -46,7 +46,7 @@ int depositar_real(char cpf[12]) {
       return -1;
     }
   }
-  
+  escrever_extrato(cpf, 1, valor_depositado, "Real", time(NULL), 0, 0);
   fclose(arquivo);
   return 1;
 }
