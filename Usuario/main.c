@@ -43,12 +43,15 @@ int main() {
           break;
         case 5:
           // comprar criptomoedas
+          comprar_criptomoeda(CPF_logado);
           break;
         case 6:
           // vender criptomoedas
+          vender_criptomoeda(CPF_logado);
           break;
         case 7:
           // atualizar cotacao
+          atualizar_cripto_usuario();
           break;
       }
     } while (sair == 0);

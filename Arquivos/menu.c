@@ -20,6 +20,31 @@ void Menu_usuario () {
   printf("0. Sair\n\n");
 }
 
+void mostrar_criptomoedas () {
+  FILE *arquivo_criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+
+  Criptomoedas criptomoeda;
+
+  printf("|----------------------------------------------------------------|\n");
+  printf("|                    CRIPTOMOEDAS DISPONIVEIS                    |\n");
+  printf("|----------------------------------------------------------------|\n");
+  printf("| Nome             taxa venda    taxa compra    cotacao atual    |\n");
+  printf("|----------------------------------------------------------------|\n");
+
+
+  while(fread(&criptomoeda, sizeof(Criptomoedas), 1, arquivo_criptomoedas) == 1) {
+    printf("| %-20s %02d %%          %02d %%       R$ %-13.2f |\n", 
+    criptomoeda.Nome_Cripto, 
+    criptomoeda.taxa_venda, 
+    criptomoeda.taxa_compra, 
+    criptomoeda.cotacao);
+  }
+
+  printf("|----------------------------------------------------------------|\n\n");
+
+  fclose(arquivo_criptomoedas);
+}
+
 // ===================================
 //            Administrador
 // ===================================
