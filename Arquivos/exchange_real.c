@@ -109,6 +109,7 @@ int sacar_real(char cpf[12]) {
     }
   }
   fclose(arquivo);
+  escrever_extrato(cpf, 0, valor_sacado, "Real", time(NULL), 0, 0);
   return 1;
 }
 

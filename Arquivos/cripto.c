@@ -477,7 +477,7 @@ int comprar_criptomoeda (char cpf[12]) {
     limpa_tela();
     printf("A sua compra de %.3f de %s foi realizada com sucesso.\n", quantidade_comprada, criptomoeda.Nome_Cripto);
     delay(1500);
-
+    escrever_extrato(cpf, 1, quantidade_comprada, saldo_cripto.criptomoeda, time(NULL), criptomoeda.taxa_compra, criptomoeda.cotacao);
     return 1;
 }
 
@@ -627,7 +627,7 @@ int vender_criptomoeda (char cpf[12]) {
     limpa_tela();
     printf("A sua venda de %.3f de %s foi realizada com sucesso.\n", quantidade_vendida, criptomoeda.Nome_Cripto);
     delay(1500);
-
+    escrever_extrato(cpf, 0, quantidade_vendida, saldo_cripto.criptomoeda, time(NULL), criptomoeda.taxa_compra, criptomoeda.cotacao);
     return 1;
 }
 
