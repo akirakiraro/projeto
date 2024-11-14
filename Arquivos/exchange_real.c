@@ -79,11 +79,11 @@ int sacar_real(char cpf[12]) {
     } else {
       if (valor_sacado == 0) {
         return 0;
-      } else if (valor_sacado <= valor_disponivel){
+      } else if (valor_sacado <= valor_disponivel && valor_sacado > 0){
         aprovado = 1;
       } else {
         limpa_tela();
-        printf("O valor nao pode exceder o seu saldo.\n");
+        printf("O valor deve ser positivo e nao pode exceder o seu saldo.\n");
         delay(2000);
         aprovado = 0;
       }
@@ -152,16 +152,46 @@ int consultar_saldo (char cpf[12]) {
       break;
     }
   }
+  char cpf_formatado[15];
+  formatar_cpf(cpf, cpf_formatado);
 
-  // espera ate ter as criptomoedas
   limpa_tela();
   printf("CONSULTAR SALDO\n\n");
-  printf("CPF: %s\n", cpf);
-  printf("Saldo: R$ %.2f\n", Saldo_reais);
-  printf("criotomoedas\n");
+  printf("CPF: %s\n", cpf_formatado);
+  printf("Saldo: R$ %.2f\n\n", Saldo_reais);
 
-  printf("Aperte enter para voltar ao menu.\n");
+  if (consultar_criptomoedas(cpf) == -1) {
+    printf("Voce nao possui nenhuma Criptomoeda.\n");
+  }
+
+  printf("\nAperte enter para voltar ao menu.\n");
   getchar();
   return 1;
 }
 
+int consultar_criptomoedas (char cpf[12]){
+  FILE *arquivo_criptomoeda = abrir_arquivo("Storage/Saldo_Criptomoedas.bin", "rb");
+  if (arquivo_criptomoeda == NULL) {
+    return -1;
+  }
+
+  Moeda_usuario cripto;
+  int encontrado = 0;
+  printf("Criptomoedas:\n\n");
+
+  while(fread(&cripto, sizeof(Moeda_usuario), 1, arquivo_criptomoeda) == 1) {
+    if (strcmp(cripto.cpf, cpf) == 0) {
+      encontrado = 1;
+      printf("%s: %.3f\n", cripto.criptomoeda, cripto.quantidade);
+    }
+  }
+
+  fclose(arquivo_criptomoeda);
+
+  if (encontrado == 0) {
+    return -1;
+  } else {
+    return 1;
+  }
+  
+}

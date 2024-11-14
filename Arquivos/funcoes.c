@@ -148,7 +148,40 @@ int pede_senha (char *senha) {
   return 1;
 }
 
+int iniciar_programa (int usuario) {
+  // verifica arquivo de usuarios ou adm
+  if (usuario == 1) {
+    // verifica_arq de usuarios
+    FILE *arq_usuarios = abrir_arquivo("Storage/Usuarios.bin","rb");
+    if (arq_usuarios == NULL) {
+      arq_usuarios = abrir_arquivo("Storage/Usuarios.bin","wb");
+      fclose(arq_usuarios);
+    }
+  }
 
+  // verifica arq extrato
+  FILE *arq_extrato = abrir_arquivo("Storage/Extrato.bin","rb");
+  if (arq_extrato == NULL) {
+    arq_extrato = abrir_arquivo("Storage/Extrato.bin","wb");
+    fclose(arq_extrato);
+  }
+  
+  // verifica arq saldo_criptomoedas
+  FILE *arq_saldo_criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","rb");
+  if (arq_saldo_criptomoedas == NULL) {
+    arq_saldo_criptomoedas = abrir_arquivo("Storage/Saldo_Criptomoedas.bin","wb");
+    fclose(arq_saldo_criptomoedas);
+  }
+
+  // verifica arq Criptomoedas
+  FILE *arq_Criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
+  if (arq_Criptomoedas == NULL) {
+    arq_Criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","wb");
+    fclose(arq_Criptomoedas);
+  }
+
+  return 1;
+}
 
 
 
