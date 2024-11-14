@@ -321,7 +321,13 @@ int comprar_criptomoeda (char cpf[12]) {
 
     do{
         limpa_tela();
-        mostrar_criptomoedas();
+        if (mostrar_criptomoedas() == -1) {
+            limpa_tela();
+            printf("Nao ha Criptomoedas disponiveis para compra.\n");
+            printf("Por favor entre em contato com um Administrador.\n");
+            delay(3000);
+            return -1;
+        }
         printf("> Digite 0 para voltar ou o nome da Criptomoeda que deseja comprar.\n");
         printf("> Saldo atual: R$ %.2f\n", saldo_reais);
         printf("> Nome: ");
@@ -501,7 +507,12 @@ int vender_criptomoeda (char cpf[12]) {
 
     do{
         limpa_tela();
-        mostrar_criptomoedas(); // arrumar ==============================================
+        if (mostrar_criptomoedas_possuidas(cpf) == -1) {
+            limpa_tela();
+            printf("Voce nao possui Criptomoedas.\n");
+            delay(2000);
+            return -1;
+        }
         printf("> Digite 0 para voltar ou o nome da Criptomoeda que deseja vender.\n");
         printf("> Nome: ");
         fgets(nome_criptomoeda, 20, stdin);
@@ -638,8 +649,10 @@ int atualizar_cripto_usuario () {
 
     FILE *arquivo_cripto = abrir_arquivo("Storage/Criptomoedas.bin","rb+");
     Criptomoedas cripto;
+    int encontrada = 0;
 
     while(fread(&cripto, sizeof(Criptomoedas), 1, arquivo_cripto) == 1) {
+        encontrada = 1;
         if (strcmp(cripto.Nome_Cripto, nome_cripto_anterior) == 0) {
             break;
         } else {
@@ -659,6 +672,14 @@ int atualizar_cripto_usuario () {
     }
 
     fclose(arquivo_cripto);
+
+    if (encontrada == 0) {
+        limpa_tela();
+        printf("Nao ha criptomoedas disponiveis.\n");
+        printf("Fale com um administrador.\n");
+        delay(2000);
+        return -1;
+    }
 
     limpa_tela();
     printf("Todas as Criptomoedas foram atualizadas.\n");

@@ -73,6 +73,7 @@ void ler_extrato(char cpf[12]) {
   }
 
   printf("\nPressione enter para voltar.\n");
+  getchar();
 }
 
 

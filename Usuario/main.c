@@ -2,6 +2,8 @@
 
 int main() {
   
+  iniciar_programa(1);
+
   char CPF_logado[12];
   do{
     int logado = 0;
@@ -33,7 +35,6 @@ int main() {
         case 2:
           // consultar extrato
           ler_extrato(CPF_logado);
-          getchar();
           break;
         case 3:
           // depositar reais

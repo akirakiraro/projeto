@@ -67,13 +67,15 @@ int criar_arquivo_binario(const char* nome_arquivo, const char* modo_abertura);
 int verifica_numero (const char *cpf);
 int pede_CPF (char *CPF);
 int pede_senha (char *senha);
+int iniciar_programa (int usuario);
 
 // MENU.C
 void Menu_usuario ();
 void Menu_inicial_usuario ();
 void Menu_Adm ();
 void Menu_inicial_adm ();
-void mostrar_criptomoedas ();
+int mostrar_criptomoedas ();
+int mostrar_criptomoedas_possuidas (char cpf[12]);
 
 // REGISTRO_LOGIN.C
 int adicionar_administrador ();
@@ -100,6 +102,7 @@ int depositar_real(char cpf[12]);
 int sacar_real(char cpf[12]);
 int verifica_saque (char cpf[12], float *valor_disponivel);
 int consultar_saldo (char cpf[12]);
+int consultar_criptomoedas (char cpf[12]);
 
 // EXTRATO.C
 void escrever_extrato(char CPF[12], int tipo, float valor, const char *moeda, time_t data, int taxa, float cotacao);
