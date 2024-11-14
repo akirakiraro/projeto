@@ -20,7 +20,7 @@ typedef struct {
   char CPF[12];  // CPF do usuario
   int tipo;      // 1 para positivo e 0 para negativo
   float valor;   // valor da transacao
-  int moeda;     // Qual moeda foi comprada ou vendida
+  char moeda[20];// Qual moeda foi comprada ou vendida
   time_t data;   // data e hora da transacao
   int taxa;      // taxa da transacao
   float cotacao; // cotacao da criptomoeda na hora da transacao
@@ -100,6 +100,10 @@ int depositar_real(char cpf[12]);
 int sacar_real(char cpf[12]);
 int verifica_saque (char cpf[12], float *valor_disponivel);
 int consultar_saldo (char cpf[12]);
+
+// EXTRATO.C
+void escrever_extrato(char CPF[12], int tipo, float valor, const char *moeda, time_t data, int taxa, float cotacao);
+void ler_extrato(char cpf[12]);
 
 
 #endif
