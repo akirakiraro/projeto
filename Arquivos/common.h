@@ -103,10 +103,12 @@ int sacar_real(char cpf[12]);
 int verifica_saque (char cpf[12], float *valor_disponivel);
 int consultar_saldo (char cpf[12]);
 int consultar_criptomoedas (char cpf[12]);
+int consultar_saldo_adm ();
 
 // EXTRATO.C
 void escrever_extrato(char CPF[12], int tipo, float valor, const char *moeda, time_t data, int taxa, float cotacao);
 void ler_extrato(char cpf[12]);
+int consultar_extrato_adm();
 
 
 #endif

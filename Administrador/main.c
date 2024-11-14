@@ -3,7 +3,8 @@
 // Versao para ADM
 
 int main() {
-  
+  iniciar_programa(0);
+
   char CPF_logado[12];
   do{
     int logado = 0;
@@ -44,6 +45,12 @@ int main() {
           break;
         case 4:
           excluir_criptomoeda();
+          break;
+        case 5:
+          consultar_saldo_adm();
+          break;
+        case 6:
+          consultar_extrato_adm();
           break;
         case 7:
           atualizar_cripto();

@@ -161,7 +161,7 @@ int consultar_saldo (char cpf[12]) {
   printf("Saldo: R$ %.2f\n\n", Saldo_reais);
 
   if (consultar_criptomoedas(cpf) == -1) {
-    printf("Voce nao possui nenhuma Criptomoeda.\n");
+    printf("Nao possui nenhuma Criptomoeda.\n");
   }
 
   printf("\nAperte enter para voltar ao menu.\n");
@@ -194,4 +194,15 @@ int consultar_criptomoedas (char cpf[12]){
     return 1;
   }
   
+}
+
+int consultar_saldo_adm () {
+  char cpf_consultado[12];
+  limpa_tela();
+  if (pede_CPF(cpf_consultado) == -1) {
+    return -1;
+  }
+
+  consultar_saldo(cpf_consultado);
+  return 1;
 }

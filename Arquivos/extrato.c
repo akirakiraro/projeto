@@ -76,7 +76,16 @@ void ler_extrato(char cpf[12]) {
   getchar();
 }
 
+int consultar_extrato_adm () {
+  char cpf_consultado[12];
+  limpa_tela();
+  if (pede_CPF(cpf_consultado) == -1) {
+    return -1;
+  }
 
+  ler_extrato(cpf_consultado);
+  return 1;
+}
 
 
 
