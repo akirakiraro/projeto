@@ -68,6 +68,7 @@ int verifica_numero (const char *cpf);
 int pede_CPF (char *CPF);
 int pede_senha (char *senha);
 int iniciar_programa (int usuario);
+int criar_cripto_basicas ();
 
 // MENU.C
 void Menu_usuario ();

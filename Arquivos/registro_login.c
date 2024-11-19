@@ -60,6 +60,9 @@ int logar_administrador(char *CPF_logado) {
   char CPF[12], senha[7];
   
   if (verifica_arquivo_adm() == -1) {
+    limpa_tela();
+    printf("Ainda nao existe um login.\n");
+    delay(1500);
     return -1;
   }
 
@@ -152,6 +155,9 @@ int login_usuario (char *CPF_logado) {
 
   // verifica arquivo
   if (verifica_arquivo_usuarios() == -1) {
+    limpa_tela();
+    printf("Ainda nao existe um login disponivel, fale com um administrador.\n");
+    delay(1500);
     return -1;
   }
 

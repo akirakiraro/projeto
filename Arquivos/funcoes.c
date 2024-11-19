@@ -157,6 +157,13 @@ int iniciar_programa (int usuario) {
       arq_usuarios = abrir_arquivo("Storage/Usuarios.bin","wb");
       fclose(arq_usuarios);
     }
+  } else {
+    // verifica_arq de adm
+    FILE *arq_usuarios = abrir_arquivo("Storage/Administradores.bin","rb");
+    if (arq_usuarios == NULL) {
+      arq_usuarios = abrir_arquivo("Storage/Administradores.bin","wb");
+      fclose(arq_usuarios);
+    }
   }
 
   // verifica arq extrato
@@ -176,14 +183,41 @@ int iniciar_programa (int usuario) {
   // verifica arq Criptomoedas
   FILE *arq_Criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","rb");
   if (arq_Criptomoedas == NULL) {
-    arq_Criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","wb");
-    fclose(arq_Criptomoedas);
+    criar_cripto_basicas ();
   }
 
   return 1;
 }
 
+int criar_cripto_basicas () {
+  FILE *arq_Criptomoedas = abrir_arquivo("Storage/Criptomoedas.bin","wb");
 
+  Criptomoedas cripto;
+
+  snprintf(cripto.Nome_Cripto, sizeof(cripto.Nome_Cripto), "%s", "Bitcoin");
+  cripto.taxa_compra = 2;
+  cripto.taxa_venda = 3;
+  cripto.cotacao = 520000;
+
+  fwrite(&cripto, sizeof(Criptomoedas), 1, arq_Criptomoedas);
+
+  snprintf(cripto.Nome_Cripto, sizeof(cripto.Nome_Cripto), "%s", "Ethereun");
+  cripto.taxa_compra = 1;
+  cripto.taxa_venda = 2;
+  cripto.cotacao = 18000;
+
+  fwrite(&cripto, sizeof(Criptomoedas), 1, arq_Criptomoedas);
+
+  snprintf(cripto.Nome_Cripto, sizeof(cripto.Nome_Cripto), "%s", "Ripple");
+  cripto.taxa_compra = 1;
+  cripto.taxa_venda = 1;
+  cripto.cotacao = 6;
+
+  fwrite(&cripto, sizeof(Criptomoedas), 1, arq_Criptomoedas);
+  fclose(arq_Criptomoedas);
+
+  return 1;
+}
 
 
 
